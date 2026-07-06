@@ -1,0 +1,31 @@
+@keyframes flouv-sweep {
+  0% { transform: translateX(-30%); opacity: 0.3; }
+  50% { opacity: 0.9; }
+  100% { transform: translateX(130%); opacity: 0.3; }
+}
+@keyframes flouv-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+@keyframes flouv-drift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+@keyframes flouv-spin {
+  to { transform: rotate(360deg); }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: oklch(0.985 0.004 250);
+  color: oklch(0.22 0.01 250);
+}
+
+a {
+  cursor: pointer;
+}

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: flouv-web
+    env: python
+    buildCommand: "npm install && npm run build && pip install -r requirements.txt && alembic upgrade head"
+    startCommand: "cd backend && uvicorn main:app --host 0.0.0.0 --port 10000"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    disk:
+      name: sqlite-data
+      mountPath: /opt/render/project/src/backend
+      sizeGB: 1
