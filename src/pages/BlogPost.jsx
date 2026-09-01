@@ -32,7 +32,7 @@ export default function BlogPost() {
   if (loading) {
     return (
       <Layout>
-        <main style={{ padding: '120px 56px', textAlign: 'center', background: 'oklch(0.985 0.004 250)', minHeight: '80vh' }}>
+        <main style={{ padding: '120px 56px', textAlign: 'center', background: 'var(--flouv-white)', minHeight: '80vh' }}>
           Loading...
         </main>
       </Layout>
@@ -52,9 +52,9 @@ export default function BlogPost() {
   if (!blog) {
     return (
       <Layout>
-        <main style={{ padding: '120px 56px', textAlign: 'center', background: 'oklch(0.985 0.004 250)', minHeight: '80vh' }}>
-          <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 40, color: 'oklch(0.18 0.02 260)' }}>Blog post not found.</h1>
-          <Link to="/blog" style={{ color: 'oklch(0.55 0.19 295)', textDecoration: 'none', fontWeight: 600 }}>← Back to all posts</Link>
+        <main style={{ padding: '120px 56px', textAlign: 'center', background: 'var(--flouv-white)', minHeight: '80vh' }}>
+          <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 40, color: 'var(--flouv-blue)' }}>Blog post not found.</h1>
+          <Link to="/blog" style={{ color: 'var(--flouv-blue)', textDecoration: 'none', fontWeight: 600 }}>← Back to all posts</Link>
         </main>
       </Layout>
     );
@@ -62,29 +62,29 @@ export default function BlogPost() {
 
   return (
     <Layout active="Blog">
-      <main style={{ background: 'oklch(0.985 0.004 250)', minHeight: '100vh', paddingBottom: 120 }}>
+      <main style={{ background: 'var(--flouv-white)', minHeight: '100vh', paddingBottom: 120 }}>
         
         <div style={{ maxWidth: 800, margin: '0 auto', padding: '60px 24px 0' }}>
-          <Link to="/blog" style={{ color: 'oklch(0.5 0.01 250)', textDecoration: 'none', fontSize: 14, fontWeight: 500, fontFamily: "'IBM Plex Sans', sans-serif" }}>
+          <Link to="/blog" style={{ color: 'var(--flouv-blue)', textDecoration: 'none', fontSize: 14, fontWeight: 500, fontFamily: "'Inter', sans-serif" }}>
             ← Back to Blog
           </Link>
-          
+
           <div style={{ display: 'flex', gap: 8, marginTop: 24, flexWrap: 'wrap' }}>
-            <div style={{ display: 'inline-block', padding: '4px 12px', background: 'oklch(0.18 0.02 260)', color: 'white', fontSize: 12, fontWeight: 600, borderRadius: 100, fontFamily: "'IBM Plex Sans', sans-serif", letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            <div style={{ display: 'inline-block', padding: '4px 12px', background: 'var(--flouv-blue)', color: 'white', fontSize: 12, fontWeight: 600, borderRadius: 100, fontFamily: "'Inter', sans-serif", letterSpacing: '0.05em', textTransform: 'uppercase' }}>
               {blog.category}
             </div>
             {parsedCategories.map((cat, i) => (
-              <div key={i} style={{ display: 'inline-block', padding: '4px 12px', background: 'oklch(0.9 0.01 250)', color: 'oklch(0.18 0.02 260)', fontSize: 12, fontWeight: 600, borderRadius: 100, fontFamily: "'IBM Plex Sans', sans-serif", letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+              <div key={i} style={{ display: 'inline-block', padding: '4px 12px', background: 'var(--flouv-blue-tint)', color: 'var(--flouv-blue)', fontSize: 12, fontWeight: 600, borderRadius: 100, fontFamily: "'Inter', sans-serif", letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                 {cat}
               </div>
             ))}
           </div>
 
-          <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 48, fontWeight: 700, margin: '16px 0 16px', lineHeight: 1.1, color: 'oklch(0.18 0.02 260)' }}>
+          <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 48, fontWeight: 700, margin: '16px 0 16px', lineHeight: 1.1, color: 'var(--flouv-blue)' }}>
             {blog.title}
           </h1>
-          
-          <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: 14, color: 'oklch(0.5 0.01 250)', marginBottom: 40, letterSpacing: '0.02em' }}>
+
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: 'var(--flouv-muted)', marginBottom: 40, letterSpacing: '0.02em' }}>
             {blog.date}
           </div>
         </div>
@@ -94,7 +94,7 @@ export default function BlogPost() {
             <img 
               src={blog.image} 
               alt={blog.title} 
-              style={{ width: '100%', borderRadius: 12, boxShadow: '0 20px 50px oklch(0.4 0.02 260 / 0.15)' }} 
+              style={{ width: '100%', borderRadius: 12, boxShadow: '0 20px 50px oklch(0.3 0.05 264 / 0.15)' }}
             />
           </div>
         )}
@@ -105,10 +105,10 @@ export default function BlogPost() {
             className="ql-editor"
             dangerouslySetInnerHTML={{ __html: blog.content }}
             style={{ 
-              fontFamily: "'IBM Plex Sans', sans-serif", 
-              fontSize: 18, 
-              lineHeight: 1.8, 
-              color: 'oklch(0.3 0.01 250)',
+              fontFamily: "'Inter', sans-serif", 
+              fontSize: 18,
+              lineHeight: 1.8,
+              color: 'var(--flouv-text)',
               padding: 0,
               marginBottom: parsedPoints.length > 0 ? 40 : 0
             }}
@@ -116,8 +116,8 @@ export default function BlogPost() {
           
           {parsedPoints.length > 0 && (
             <div>
-              <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 24, color: 'oklch(0.18 0.02 260)', marginBottom: 16 }}>Key Points</h3>
-              <ul style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: 18, lineHeight: 1.8, color: 'oklch(0.3 0.01 250)', paddingLeft: 24 }}>
+              <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, color: 'var(--flouv-blue)', marginBottom: 16 }}>Key Points</h3>
+              <ul style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, lineHeight: 1.8, color: 'var(--flouv-text)', paddingLeft: 24 }}>
                 {parsedPoints.map((pt, i) => (
                   <li key={i} style={{ marginBottom: 8 }}>{pt}</li>
                 ))}

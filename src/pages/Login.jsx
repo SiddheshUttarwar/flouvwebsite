@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const Login = ({ onSuccess }) => {
   const [password, setPassword] = useState('');
@@ -42,19 +41,19 @@ const Login = ({ onSuccess }) => {
           align-items: center;
           justify-content: center;
           min-height: 100vh;
-          background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+          background: linear-gradient(135deg, var(--flouv-blue) 0%, var(--flouv-blue-deep) 100%);
           font-family: 'Inter', 'Roboto', sans-serif;
         }
         .login-card {
-          background: rgba(255, 255, 255, 0.05);
+          background: oklch(0.94 0.02 264 / 0.05);
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid oklch(0.94 0.02 264 / 0.1);
           border-radius: 20px;
           padding: 40px;
           width: 100%;
           max-width: 420px;
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 25px 50px -12px oklch(0.3 0.05 264 / 0.5);
           display: flex;
           flex-direction: column;
           gap: 24px;
@@ -83,8 +82,8 @@ const Login = ({ onSuccess }) => {
           font-weight: 500;
         }
         .input-group input {
-          background: rgba(0, 0, 0, 0.2);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: oklch(0.3 0.05 264 / 0.2);
+          border: 1px solid oklch(0.94 0.02 264 / 0.1);
           border-radius: 12px;
           padding: 14px 16px;
           color: #ffffff;
@@ -93,13 +92,13 @@ const Login = ({ onSuccess }) => {
           transition: all 0.2s ease;
         }
         .input-group input:focus {
-          border-color: #3b82f6;
-          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-          background: rgba(0, 0, 0, 0.3);
+          border-color: var(--flouv-blue);
+          box-shadow: 0 0 0 2px oklch(0.37 0.19 264 / 0.2);
+          background: oklch(0.3 0.05 264 / 0.3);
         }
         .login-button {
-          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-          color: white;
+          background: var(--flouv-green);
+          color: var(--flouv-green-ink);
           border: none;
           border-radius: 12px;
           padding: 16px;
@@ -111,7 +110,7 @@ const Login = ({ onSuccess }) => {
         }
         .login-button:hover {
           transform: translateY(-2px);
-          box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
+          box-shadow: 0 10px 15px -3px oklch(0.6 0.2 154 / 0.4);
         }
         .login-button:active {
           transform: translateY(0);

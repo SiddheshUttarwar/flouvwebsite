@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import Layout from '../components/Layout.jsx';
@@ -9,7 +8,6 @@ const API_URL = '/api/blogs';
 const UPLOAD_URL = '/api/upload';
 
 export default function Admin() {
-  const navigate = useNavigate();
   const [blogs, setBlogs] = useState([]);
   const [formData, setFormData] = useState({ title: '', date: '', category: '', image: '', content: '', points: '', categories: '' });
   const [imageFile, setImageFile] = useState(null);
@@ -42,7 +40,7 @@ export default function Admin() {
     try {
       const res = await fetch(API_URL, { credentials: 'include' });
       const data = await res.json();
-      setBlogs(data);
+      setBlogs(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to fetch blogs', err);
     }
@@ -194,17 +192,17 @@ export default function Admin() {
 
   return (
     <Layout active="Admin">
-      <main style={{ padding: '60px 56px', background: 'oklch(0.985 0.004 250)', minHeight: '80vh' }}>
+      <main style={{ padding: '60px 56px', background: 'var(--flouv-bg-soft)', minHeight: '80vh' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: 60 }}>
           
           {/* Create/Edit Blog Form */}
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 32, fontWeight: 700, margin: 0, color: 'oklch(0.18 0.02 260)' }}>
+                <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, fontWeight: 700, margin: 0, color: 'var(--flouv-blue)' }}>
                 {editingId ? 'Edit Blog' : 'Create New Blog'}
                 </h2>
                 {editingId && (
-                    <button onClick={cancelEdit} style={{ background: 'none', border: 'none', color: 'oklch(0.5 0.01 250)', cursor: 'pointer', textDecoration: 'underline' }}>
+                    <button onClick={cancelEdit} style={{ background: 'none', border: 'none', color: 'var(--flouv-muted)', cursor: 'pointer', textDecoration: 'underline' }}>
                         Cancel Edit
                     </button>
                 )}
@@ -217,7 +215,7 @@ export default function Admin() {
                 value={formData.title}
                 onChange={handleChange}
                 required
-                style={{ padding: 12, borderRadius: 6, border: '1px solid #ddd', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: 15 }}
+                style={{ padding: 12, borderRadius: 6, border: '1px solid var(--flouv-border)', fontFamily: "'Inter', sans-serif", fontSize: 15 }}
               />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 <input
@@ -226,7 +224,7 @@ export default function Admin() {
                     value={formData.date}
                     onChange={handleChange}
                     required
-                    style={{ padding: 12, borderRadius: 6, border: '1px solid #ddd', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: 15 }}
+                    style={{ padding: 12, borderRadius: 6, border: '1px solid var(--flouv-border)', fontFamily: "'Inter', sans-serif", fontSize: 15 }}
                 />
                 <input
                     name="category"
@@ -234,7 +232,7 @@ export default function Admin() {
                     value={formData.category}
                     onChange={handleChange}
                     required
-                    style={{ padding: 12, borderRadius: 6, border: '1px solid #ddd', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: 15 }}
+                    style={{ padding: 12, borderRadius: 6, border: '1px solid var(--flouv-border)', fontFamily: "'Inter', sans-serif", fontSize: 15 }}
                 />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
@@ -243,19 +241,19 @@ export default function Admin() {
                     placeholder='Points (JSON array)'
                     value={formData.points || ''}
                     onChange={handleChange}
-                    style={{ padding: 12, borderRadius: 6, border: '1px solid #ddd', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: 15 }}
+                    style={{ padding: 12, borderRadius: 6, border: '1px solid var(--flouv-border)', fontFamily: "'Inter', sans-serif", fontSize: 15 }}
                 />
                 <input
                     name="categories"
                     placeholder='Categories (JSON array)'
                     value={formData.categories || ''}
                     onChange={handleChange}
-                    style={{ padding: 12, borderRadius: 6, border: '1px solid #ddd', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: 15 }}
+                    style={{ padding: 12, borderRadius: 6, border: '1px solid var(--flouv-border)', fontFamily: "'Inter', sans-serif", fontSize: 15 }}
                 />
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <label style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: 13, color: 'oklch(0.5 0.01 250)', fontWeight: 600 }}>
+                <label style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: 'var(--flouv-muted)', fontWeight: 600 }}>
                   {editingId ? 'Update Cover Image (optional)' : 'Upload Cover Image'}
                 </label>
                 <input
@@ -263,15 +261,15 @@ export default function Admin() {
                   accept="image/*"
                   onChange={handleFileChange}
                   required={!editingId && !formData.image}
-                  style={{ padding: 10, borderRadius: 6, border: '1px solid #ddd', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: 14, background: 'white' }}
+                  style={{ padding: 10, borderRadius: 6, border: '1px solid var(--flouv-border)', fontFamily: "'Inter', sans-serif", fontSize: 14, background: 'var(--flouv-white)' }}
                 />
                 {editingId && formData.image && !imageFile && (
-                    <span style={{ fontSize: 12, color: 'oklch(0.5 0.01 250)' }}>Currently using: {formData.image.split('/').pop()}</span>
+                    <span style={{ fontSize: 12, color: 'var(--flouv-muted)' }}>Currently using: {formData.image.split('/').pop()}</span>
                 )}
               </div>
 
               {/* Rich Text Editor */}
-              <div style={{ background: 'white', borderRadius: 6, border: '1px solid #ddd', overflow: 'hidden' }}>
+              <div style={{ background: 'var(--flouv-white)', borderRadius: 6, border: '1px solid var(--flouv-border)', overflow: 'hidden' }}>
                 <ReactQuill 
                     theme="snow" 
                     value={formData.content} 
@@ -285,14 +283,14 @@ export default function Admin() {
                 disabled={loading}
                 style={{
                   padding: '14px 24px',
-                  background: 'oklch(0.18 0.02 260)',
-                  color: 'oklch(0.98 0.005 250)',
+                  background: 'var(--flouv-green)',
+                  color: 'var(--flouv-green-ink)',
                   border: 'none',
                   borderRadius: 6,
                   fontSize: 16,
                   fontWeight: 600,
                   cursor: loading ? 'wait' : 'pointer',
-                  fontFamily: "'IBM Plex Sans', sans-serif",
+                  fontFamily: "'Inter', sans-serif",
                   marginTop: 40
                 }}
               >
@@ -306,11 +304,11 @@ export default function Admin() {
             
             {/* Knowledge Base Sync Section */}
             <div>
-              <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 32, fontWeight: 700, margin: '0 0 16px', color: 'oklch(0.18 0.02 260)' }}>
+              <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, fontWeight: 700, margin: '0 0 16px', color: 'var(--flouv-blue)' }}>
                 Knowledge Base
               </h2>
-              <div style={{ padding: 24, background: 'white', borderRadius: 8, boxShadow: '0 4px 12px rgba(0,0,0,0.05)', border: '1px solid oklch(0.9 0.01 250)' }}>
-                <p style={{ color: 'oklch(0.4 0.01 250)', marginTop: 0, marginBottom: 20, fontSize: 14, lineHeight: 1.5 }}>
+              <div style={{ padding: 24, background: 'var(--flouv-white)', borderRadius: 8, boxShadow: '0 4px 12px oklch(0.3 0.08 264 / 0.05)', border: '1px solid var(--flouv-border)' }}>
+                <p style={{ color: 'var(--flouv-text)', marginTop: 0, marginBottom: 20, fontSize: 14, lineHeight: 1.5 }}>
                   Click below to fetch the latest documents from your connected Google Drive folder. This will automatically rebuild the AI's vectors so it instantly learns new information.
                 </p>
                 <button
@@ -318,15 +316,15 @@ export default function Admin() {
                   disabled={isSyncing}
                   style={{
                     padding: '12px 20px',
-                    background: 'oklch(0.6 0.19 295)', // brand blue
-                    color: 'white',
+                    background: 'var(--flouv-blue)', // brand blue
+                    color: 'var(--flouv-white)',
                     border: 'none',
                     borderRadius: 6,
                     fontSize: 14,
                     fontWeight: 600,
                     cursor: isSyncing ? 'wait' : 'pointer',
                     width: '100%',
-                    fontFamily: "'IBM Plex Sans', sans-serif",
+                    fontFamily: "'Inter', sans-serif",
                     opacity: isSyncing ? 0.7 : 1
                   }}
                 >
@@ -337,25 +335,25 @@ export default function Admin() {
 
             {/* Manage Blogs Section */}
             <div>
-              <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 32, fontWeight: 700, margin: '0 0 24px', color: 'oklch(0.18 0.02 260)' }}>
+              <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, fontWeight: 700, margin: '0 0 24px', color: 'var(--flouv-blue)' }}>
               Manage Blogs
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {blogs.length === 0 ? (
-                <p style={{ color: 'oklch(0.5 0.01 250)' }}>No blogs found. Create one!</p>
+                <p style={{ color: 'var(--flouv-muted)' }}>No blogs found. Create one!</p>
               ) : (
                 blogs.map((blog) => (
-                  <div key={blog.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 16, background: 'white', borderRadius: 8, boxShadow: '0 4px 12px rgba(0,0,0,0.05)', border: editingId === blog.id ? '2px solid oklch(0.18 0.02 260)' : '2px solid transparent' }}>
+                  <div key={blog.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 16, background: 'var(--flouv-white)', borderRadius: 8, boxShadow: '0 4px 12px oklch(0.3 0.08 264 / 0.05)', border: editingId === blog.id ? '2px solid var(--flouv-blue)' : '2px solid transparent' }}>
                     <div>
-                      <div style={{ fontWeight: 600, color: 'oklch(0.18 0.02 260)', marginBottom: 4, fontFamily: "'Space Grotesk', sans-serif" }}>{blog.title}</div>
-                      <div style={{ fontSize: 12, color: 'oklch(0.5 0.01 250)', fontFamily: "'IBM Plex Sans', sans-serif" }}>{blog.date} &bull; {blog.category}</div>
+                      <div style={{ fontWeight: 600, color: 'var(--flouv-blue)', marginBottom: 4, fontFamily: "'Inter', sans-serif" }}>{blog.title}</div>
+                      <div style={{ fontSize: 12, color: 'var(--flouv-muted)', fontFamily: "'Inter', sans-serif" }}>{blog.date} &bull; {blog.category}</div>
                     </div>
                     <div style={{ display: 'flex', gap: 8 }}>
                         <button
                         onClick={() => handleEdit(blog)}
                         style={{
-                            background: 'oklch(0.9 0.01 250)',
-                            color: 'oklch(0.18 0.02 260)',
+                            background: 'var(--flouv-border)',
+                            color: 'var(--flouv-blue)',
                             border: 'none',
                             borderRadius: 4,
                             padding: '6px 12px',
@@ -369,8 +367,8 @@ export default function Admin() {
                         <button
                         onClick={() => handleDelete(blog.id)}
                         style={{
-                            background: 'oklch(0.6 0.19 295)',
-                            color: 'white',
+                            background: 'var(--flouv-blue)',
+                            color: 'var(--flouv-white)',
                             border: 'none',
                             borderRadius: 4,
                             padding: '6px 12px',

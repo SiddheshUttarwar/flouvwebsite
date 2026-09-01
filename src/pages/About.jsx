@@ -1,6 +1,36 @@
+import { Link } from 'react-router-dom';
 import Layout from '../components/Layout.jsx';
 import ceoPhoto from '../../uploads/pankajttarwar.webp';
 import ctoPhoto from '../../uploads/AnkitPatras2.webp';
+
+const PERFORMANCE = [
+  {
+    title: 'Process efficiency',
+    body: 'FloUV delivers precise, non-thermal UV-C treatment with low energy demand — reducing thermal load, preserving product value, and improving overall operational efficiency in complex liquid processing.',
+    swatch: 'var(--flouv-blue-tint)',
+    dot: { shape: 'bar', color: 'var(--flouv-blue-soft)' },
+  },
+  {
+    title: 'Easy integration',
+    body: 'FloUV is designed for seamless integration into existing processing lines, working alongside thermal, membrane, and aseptic systems. Our team provides end-to-end technical support, from system integration and commissioning to validation and scale-up.',
+    swatch: 'var(--flouv-blue-tint)',
+    dot: { shape: 'square', color: 'var(--flouv-blue-soft)' },
+  },
+];
+
+function BenefitDot({ dot }) {
+  const base = { flexShrink: 0 };
+  if (dot.shape === 'circle') {
+    return <span style={{ ...base, width: 16, height: 16, borderRadius: '50%', background: dot.color }} />;
+  }
+  if (dot.shape === 'square') {
+    return <span style={{ ...base, width: 16, height: 16, borderRadius: 3, background: dot.color }} />;
+  }
+  if (dot.shape === 'bar') {
+    return <span style={{ ...base, width: 16, height: 4, borderRadius: 2, background: dot.color }} />;
+  }
+  return <span style={{ ...base, width: 12, height: 12, border: `2px solid ${dot.color}`, borderRadius: '50%' }} />;
+}
 
 const TEAM = [
   {
@@ -11,8 +41,8 @@ const TEAM = [
     bio: "Leads FloUV's commercial strategy, partnerships, and go-to-market execution — turning validated non-thermal science into a platform processors and OEMs can actually deploy.",
     linkedin: 'https://www.linkedin.com/in/pankaj-uttarwar-7a7004b/',
     email: 'pankajuttarwar@flouv.us',
-    accent: 'oklch(0.55 0.19 295)',
-    glow: 'oklch(0.94 0.03 295)',
+    accent: 'var(--flouv-blue-soft)',
+    glow: 'var(--flouv-blue-tint)',
   },
   {
     initials: 'AP',
@@ -22,40 +52,118 @@ const TEAM = [
     bio: "Pioneered the light–matter interaction and fluid-dynamics breakthrough behind FloUV, overcoming the fundamental limits of conventional UV treatment in opaque, viscous liquids. Leads FloUV's UV-C engineering and scientific validation work.",
     linkedin: 'https://www.linkedin.com/in/ankit-patras-0a720b3a/',
     email: 'ankit.patras@flouv.us',
-    accent: 'oklch(0.6 0.09 230)',
-    glow: 'oklch(0.93 0.03 230)',
+    accent: 'var(--flouv-blue-soft)',
+    glow: 'var(--flouv-blue-tint)',
   },
 ];
+
+const PARTNER_FORMS = [
+  {
+    label: 'INDEPENDENT CONSULTANTS',
+    title: 'Specialists who bring FloUV into client projects',
+    body: 'Process, food-safety and validation consultants already advising processors on alternatives to heat, who want a non-thermal option they can stand behind technically — and the evidence package to defend it.',
+  },
+  {
+    label: 'ENGINEERING FIRMS',
+    title: 'Integrators delivering complete lines',
+    body: 'Process-engineering and EPC firms specifying whole production lines, where FloUV becomes the non-thermal treatment step inside a wider design. Our engineering team supports the interface, hydraulics, controls and validation strategy.',
+  },
+  {
+    label: 'EQUIPMENT MANUFACTURERS',
+    title: 'Global OEMs strengthening a proven tech stack',
+    body:
+      'Global manufacturers with mature, proven equipment stacks, where deep UV-C engineering has always sat too far from the core to build in-house. FloUV integrates as the validated non-thermal step, adding substantial capability to what they already sell.',
+  },
+];
+
+const SCIENCE_PATH = [
+  {
+    step: '01',
+    title: 'Optical characterization',
+    body: 'Your liquid measured on the actual stream — absorption, scattering and viscosity at treatment temperature. Always the first engagement, because everything downstream depends on it.',
+  },
+  {
+    step: '02',
+    title: 'Dose–response',
+    body: 'Your target organisms run against a collimated beam to establish a fluid-specific D₁₀ — not a value borrowed from a different matrix.',
+  },
+  {
+    step: '03',
+    title: 'Challenge studies',
+    body: 'Log-reduction evidence against the pathogen of concern, generated in your product rather than a convenient surrogate.',
+  },
+  {
+    step: '04',
+    title: 'Biodosimetry',
+    body: 'Delivered reduction equivalent fluence per unicell pass, measured at representative flow rather than inferred from lamp power.',
+  },
+  {
+    step: '05',
+    title: 'Pilot trials',
+    body: 'Configuration confirmed on the 640 LPH unicell — and, because every larger system is built from that same cell, valid at the scale you actually need.',
+  },
+  {
+    step: '06',
+    title: 'Validation support',
+    body: 'The documented evidence package your approvals and regulatory process requires, assembled from the work above.',
+  },
+];
+
+function PartnerLogoSlot({ name }) {
+  return (
+    <div
+      style={{
+        border: '2px dashed oklch(1 0 0 / 0.32)',
+        borderRadius: 10,
+        background: 'oklch(1 0 0 / 0.06)',
+        minHeight: 104,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 5,
+        padding: '16px 12px',
+        textAlign: 'center',
+      }}
+    >
+      <div style={{ fontSize: 17 }}>🖼️</div>
+      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, fontWeight: 700, color: 'oklch(0.9 0.02 260)' }}>
+        {name}
+      </div>
+      <div style={{ fontSize: 11, color: 'oklch(0.72 0.03 260)' }}>logo goes here</div>
+    </div>
+  );
+}
 
 export default function About() {
   return (
     <Layout active="About">
-      <div style={{ fontFamily: "'IBM Plex Sans', sans-serif", background: 'oklch(0.985 0.004 250)', color: 'oklch(0.22 0.01 250)' }}>
+      <div style={{ fontFamily: "'Inter', sans-serif", background: 'var(--flouv-white)', color: 'var(--flouv-ink)' }}>
         {/* HERO */}
         <section
           style={{
-            background: 'linear-gradient(180deg, oklch(0.96 0.006 250) 0%, oklch(0.93 0.008 255) 100%)',
+            background: 'linear-gradient(180deg, var(--flouv-bg-soft) 0%, var(--flouv-blue-tint) 100%)',
             padding: '90px 56px 70px',
           }}
         >
           <div style={{ maxWidth: 820, margin: '0 auto', textAlign: 'center' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'oklch(0.55 0.19 295)', marginBottom: 16 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 16 }}>
               ABOUT FLOUV
             </div>
             <h1
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Inter', sans-serif",
                 fontSize: 46,
                 lineHeight: 1.15,
                 fontWeight: 700,
                 margin: '0 0 24px',
                 letterSpacing: '-0.02em',
-                color: 'oklch(0.16 0.03 265)',
+                color: 'var(--flouv-blue)',
               }}
             >
               Building the future of non-thermal liquid processing
             </h1>
-            <p style={{ fontSize: 17, lineHeight: 1.7, color: 'oklch(0.4 0.01 260)', maxWidth: 680, margin: '0 auto' }}>
+            <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--flouv-text)', maxWidth: 680, margin: '0 auto' }}>
               FloUV is a non-thermal UV-C processing platform engineered to deliver uniform microbial
               inactivation in opaque and viscous liquids — preserving native proteins, bioactives, and
               functional quality without heat. We're building line-ready technology from validated science,
@@ -64,17 +172,54 @@ export default function About() {
           </div>
         </section>
 
+        {/* PERFORMANCE MATTERS */}
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '110px 56px 0' }}>
+          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
+            PERFORMANCE MATTERS
+          </div>
+          <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 38, fontWeight: 700, margin: '0 0 56px', letterSpacing: '-0.01em' }}>
+            Not a lab curiosity — a line-ready platform
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, marginBottom: 32 }}>
+            {PERFORMANCE.map((benefit) => (
+              <div key={benefit.title} style={{ padding: 36, border: '1px solid var(--flouv-border)', borderRadius: 10 }}>
+                <div
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 10,
+                    background: benefit.swatch,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 20,
+                  }}
+                >
+                  <BenefitDot dot={benefit.dot} />
+                </div>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 19, fontWeight: 600, margin: '0 0 10px' }}>
+                  {benefit.title}
+                </h3>
+                <p style={{ fontSize: 15, color: 'var(--flouv-text)', lineHeight: 1.6, margin: 0 }}>{benefit.body}</p>
+              </div>
+            ))}
+          </div>
+          <Link to="/technology" style={{ color: 'var(--flouv-blue)', textDecoration: 'none', fontSize: 15, fontWeight: 600 }}>
+            Visit Technology →
+          </Link>
+        </section>
+
         {/* TEAM */}
         <section style={{ maxWidth: 1280, margin: '0 auto', padding: '110px 56px' }}>
-          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'oklch(0.55 0.19 295)', marginBottom: 12 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
             LEADERSHIP
           </div>
-          <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 34, fontWeight: 700, margin: '0 0 56px', letterSpacing: '-0.01em' }}>
+          <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 34, fontWeight: 700, margin: '0 0 56px', letterSpacing: '-0.01em' }}>
             The team behind FloUV
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 32 }}>
             {TEAM.map((person) => (
-              <div key={person.name} style={{ padding: 40, background: 'oklch(0.99 0.002 250)', border: '1px solid oklch(0.9 0.005 250)', borderTop: `3px solid ${person.accent}` }}>
+              <div key={person.name} style={{ padding: 40, background: 'var(--flouv-white)', border: '1px solid var(--flouv-border)', borderTop: `3px solid ${person.accent}` }}>
                 {person.photo ? (
                   <img
                     src={person.photo}
@@ -98,7 +243,7 @@ export default function About() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       marginBottom: 24,
-                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontFamily: "'Inter', sans-serif",
                       fontSize: 40,
                       fontWeight: 700,
                       color: person.accent,
@@ -107,23 +252,23 @@ export default function About() {
                     {person.initials}
                   </div>
                 )}
-                <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 21, fontWeight: 600, margin: '0 0 4px' }}>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 21, fontWeight: 600, margin: '0 0 4px' }}>
                   {person.name}
                 </h3>
                 <div style={{ fontSize: 14, fontWeight: 600, color: person.accent, marginBottom: 16 }}>{person.title}</div>
-                <p style={{ fontSize: 15, color: 'oklch(0.4 0.01 250)', lineHeight: 1.65, margin: '0 0 24px' }}>{person.bio}</p>
+                <p style={{ fontSize: 15, color: 'var(--flouv-text)', lineHeight: 1.65, margin: '0 0 24px' }}>{person.bio}</p>
                 <div style={{ display: 'flex', gap: 20 }}>
                   <a
                     href={person.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ fontSize: 14, fontWeight: 600, color: 'oklch(0.18 0.02 260)', textDecoration: 'none' }}
+                    style={{ fontSize: 14, fontWeight: 600, color: 'var(--flouv-blue)', textDecoration: 'none' }}
                   >
                     LinkedIn →
                   </a>
                   <a
                     href={`mailto:${person.email}`}
-                    style={{ fontSize: 14, fontWeight: 600, color: 'oklch(0.18 0.02 260)', textDecoration: 'none' }}
+                    style={{ fontSize: 14, fontWeight: 600, color: 'var(--flouv-blue)', textDecoration: 'none' }}
                   >
                     {person.email}
                   </a>
@@ -133,35 +278,309 @@ export default function About() {
           </div>
         </section>
 
+        {/* PARTNERSHIP */}
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '110px 56px' }}>
+          <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
+              PARTNER WITH FLOUV
+            </div>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 34, fontWeight: 700, margin: '0 0 20px', letterSpacing: '-0.01em' }}>
+              Together we can build novel processes that solve major industrial problems
+            </h2>
+            <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--flouv-text)', maxWidth: 820, margin: '0 0 48px' }}>
+              The hardest problems in liquid processing are not waiting on a better pump. They are waiting on a
+              process that does not exist yet — and those get built jointly, by people who bring the problem and
+              people who bring the science. That is what a FloUV partnership is for. It takes several forms, and
+              the people who approach us come from every application on our map — dairy, juices, beverages and
+              ingredients, brewing, biofermentation and water.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginBottom: 72 }}>
+              {PARTNER_FORMS.map((form) => (
+                <div
+                  key={form.label}
+                  style={{
+                    padding: 36,
+                    background: 'var(--flouv-white)',
+                    border: '1px solid var(--flouv-border)',
+                    borderTop: '3px solid var(--flouv-blue)',
+                  }}
+                >
+                  <div style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '0.07em', color: 'var(--flouv-muted)', marginBottom: 14 }}>
+                    {form.label}
+                  </div>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 600, margin: '0 0 12px', lineHeight: 1.3 }}>
+                    {form.title}
+                  </h3>
+                  <p style={{ fontSize: 14.5, color: 'var(--flouv-text)', lineHeight: 1.65, margin: 0 }}>{form.body}</p>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
+              HOW WE COLLABORATE
+            </div>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 34, fontWeight: 700, margin: '0 0 20px', letterSpacing: '-0.01em' }}>
+              A new liquid enters our map by measurement, never by analogy
+            </h2>
+            <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--flouv-text)', maxWidth: 820, margin: '0 0 40px' }}>
+              When a partner brings us an application we have not treated before, our scientific team runs the same
+              characterization protocol end to end alongside theirs. Nothing is assumed from a similar-looking
+              product — every configuration traces back to a measurement made on the real stream.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, marginBottom: 48 }}>
+              {SCIENCE_PATH.map((item) => (
+                <div key={item.step} style={{ padding: '28px 26px', background: 'var(--flouv-white)', border: '1px solid var(--flouv-border)' }}>
+                  <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 700, color: 'var(--flouv-blue)', marginBottom: 8 }}>
+                    {item.step}
+                  </div>
+                  <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 16.5, fontWeight: 600, margin: '0 0 10px' }}>{item.title}</h3>
+                  <p style={{ fontSize: 14, color: 'var(--flouv-text)', lineHeight: 1.6, margin: 0 }}>{item.body}</p>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ padding: '40px 44px', background: 'var(--flouv-white)', border: '1px solid var(--flouv-border)', borderLeft: '3px solid var(--flouv-blue)' }}>
+              <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, fontWeight: 600, margin: '0 0 14px' }}>
+                Where the science is actually made
+              </h3>
+              <p style={{ fontSize: 15.5, lineHeight: 1.75, color: 'var(--flouv-text)', margin: '0 0 14px', maxWidth: 900 }}>
+                The platform was developed at Tennessee State University, and our research programme with TSU
+                remains the engine behind it — more than 30 peer-reviewed publications now underpin the technology.
+                That programme is deliberately open-ended: it exists to discover where non-thermal UV-C can go next,
+                not merely to document where it has already been.
+              </p>
+              <p style={{ fontSize: 15.5, lineHeight: 1.75, color: 'var(--flouv-text)', margin: 0, maxWidth: 900 }}>
+                The FloUV Innovation &amp; Science facility in Nashville was built for exactly this kind of discovery
+                work — collimated-beam systems, spectrophotometry, microbiology and a pilot 640 LPH reactor under one
+                roof, so a novel application can move from optical measurement to a validated configuration without
+                ever leaving the building.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* CASE STUDY — WHC LABS */}
+        <section style={{ padding: '90px 56px' }}>
+          <div style={{ maxWidth: 940, margin: '0 auto' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
+              CASE STUDY · WHC LABS
+            </div>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, fontWeight: 700, margin: '0 0 22px', letterSpacing: '-0.01em', lineHeight: 1.2 }}>
+              What a collaboration actually looks like
+            </h2>
+              <p style={{ fontSize: 16, lineHeight: 1.75, color: 'var(--flouv-text)', margin: '0 0 16px' }}>
+                WHC Labs brought the joint team a biofermentation problem: sterilizing cell culture media. The matrix
+              measured 85.55 cm⁻¹ absorbance at 254 nm — dense enough that a specification borrowed from another
+              product would have been worthless.
+              </p>
+              <p style={{ fontSize: 16, lineHeight: 1.75, color: 'var(--flouv-text)', margin: '0 0 32px' }}>
+                So nobody quoted a system. The two scientific teams characterized the media optically, then ran a
+              Salmonella Muenchen challenge across three sequential passes — a 99.4% reduction at a cumulative REF of
+              9.24 mJ/cm², establishing an apparent D₁₀ of roughly 4.10 mJ/cm² per log. That dose–response is the
+              real deliverable: it sets what a 5-log target needs and lets performance be projected for other
+              organisms. The work toward full sterilization duty continues from measured ground.
+              </p>
+
+            <div
+              style={{
+                padding: '30px 32px',
+                background: 'var(--flouv-blue-deep)',
+                color: 'oklch(0.98 0 0)',
+                borderRadius: 14,
+                display: 'grid',
+                gridTemplateColumns: '1fr 200px',
+                gap: 32,
+                alignItems: 'center',
+              }}
+            >
+              <div>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, fontWeight: 700, margin: '0 0 10px', letterSpacing: '-0.01em' }}>
+                  Let’s build the process that doesn’t exist yet
+                </h3>
+                <p style={{ fontSize: 14.5, lineHeight: 1.7, color: 'oklch(0.85 0.02 260)', margin: '0 0 20px' }}>
+                  Every novel process we have built started this way — a measurement on a real stream, and two teams
+                  willing to find out. Bring us the problem the industry has learned to live with.
+                </p>
+                <Link
+                  to="/about"
+                  style={{
+                    background: 'var(--flouv-green)',
+                    color: 'var(--flouv-green-ink)',
+                    padding: '14px 26px',
+                    borderRadius: 100,
+                    textDecoration: 'none',
+                    fontSize: 14,
+                    fontWeight: 700,
+                    display: 'inline-block',
+                  }}
+                >
+                  Start a collaboration →
+                </Link>
+              </div>
+              <PartnerLogoSlot name="WHC Labs" />
+            </div>
+          </div>
+        </section>
+
+        {/* CASE STUDY — JUICING SYSTEMS */}
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '90px 56px' }}>
+          <div style={{ maxWidth: 940, margin: '0 auto' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
+              CASE STUDY · JUICING SYSTEMS
+            </div>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, fontWeight: 700, margin: '0 0 22px', letterSpacing: '-0.01em', lineHeight: 1.2 }}>
+              How an established supplier brought new technology to its customers
+            </h2>
+              <p style={{ fontSize: 16, lineHeight: 1.75, color: 'var(--flouv-text)', margin: '0 0 16px' }}>
+                Juicing Systems sells complete juice and cider lines across Canada and the USA, backed by installation,
+              service, training, parts and financing. Their founder frames a sale as the start of the relationship
+              rather than the end of it — and the offering keeps growing as their customers’ ambitions do.
+              </p>
+              <p style={{ fontSize: 16, lineHeight: 1.75, color: 'var(--flouv-text)', margin: '0 0 32px' }}>
+                Cider is where that matters most: back-sweetening hands surviving yeast a fresh food source, so packages
+              referment, cider drifts dry and cloudy, and cans bulge. So Juicing Systems brought their customers
+              something new. FloUV’s non-thermal step now sits in the cider lines they supply, delivered by the same
+              install crew, service contract and financing. They are our exclusive partner for apple cider
+              pasteurization, reaching hundreds of small producers through a relationship that was already there.
+              </p>
+
+            <div
+              style={{
+                padding: '30px 32px',
+                background: 'var(--flouv-blue-deep)',
+                color: 'oklch(0.98 0 0)',
+                borderRadius: 14,
+                display: 'grid',
+                gridTemplateColumns: '1fr 200px',
+                gap: 32,
+                alignItems: 'center',
+              }}
+            >
+              <div>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, fontWeight: 700, margin: '0 0 10px', letterSpacing: '-0.01em' }}>
+                  Bring something new to the customers who already trust you
+                </h3>
+                <p style={{ fontSize: 14.5, lineHeight: 1.7, color: 'oklch(0.85 0.02 260)', margin: '0 0 20px' }}>
+                  If you supply or service equipment in food and beverage processing, FloUV widens what you can offer
+                  without changing how you work — innovation your customers get from the people they already call.
+                </p>
+                <Link
+                  to="/about"
+                  style={{
+                    background: 'var(--flouv-green)',
+                    color: 'var(--flouv-green-ink)',
+                    padding: '14px 26px',
+                    borderRadius: 100,
+                    textDecoration: 'none',
+                    fontSize: 14,
+                    fontWeight: 700,
+                    display: 'inline-block',
+                  }}
+                >
+                  Explore a distribution partnership →
+                </Link>
+              </div>
+              <PartnerLogoSlot name="Juicing Systems" />
+            </div>
+          </div>
+        </section>
+
+        {/* CASE STUDY — ELEFQ */}
+        <section style={{ padding: '90px 56px' }}>
+          <div style={{ maxWidth: 940, margin: '0 auto' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
+              CASE STUDY · ELEFQ MARKET SOLUTIONS
+            </div>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, fontWeight: 700, margin: '0 0 22px', letterSpacing: '-0.01em', lineHeight: 1.2 }}>
+              How a consultancy widened what it could offer its network
+            </h2>
+              <p style={{ fontSize: 16, lineHeight: 1.75, color: 'var(--flouv-text)', margin: '0 0 16px' }}>
+                ELEFQ Market Solutions works out of Hamburg and Kiel on market access for process technology. Its founders
+              bring more than 25 years across European dairy and liquid food processing — including VP-level
+              operational responsibility inside a global dairy equipment group — and the network that comes with a
+              career spent in those rooms.
+              </p>
+              <p style={{ fontSize: 16, lineHeight: 1.75, color: 'var(--flouv-text)', margin: '0 0 32px' }}>
+                As Dirk Dubiel puts it, producers want “two things at once: better products and lower operational costs.”
+              Non-thermal UV-C speaks to both, and adopts incrementally — standalone, as a pre-treatment that lightens
+              the thermal load, or as a post-treatment step — so nobody has to tear out the plant they already run.
+              Since April 2026 ELEFQ has been our exclusive European agent for dairy and first point of contact across
+              Europe: a consulting practice built on relationships, now carrying a technology those relationships were
+              already asking about.
+              </p>
+
+            <div
+              style={{
+                padding: '30px 32px',
+                background: 'var(--flouv-blue-deep)',
+                color: 'oklch(0.98 0 0)',
+                borderRadius: 14,
+                display: 'grid',
+                gridTemplateColumns: '1fr 200px',
+                gap: 32,
+                alignItems: 'center',
+              }}
+            >
+              <div>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, fontWeight: 700, margin: '0 0 10px', letterSpacing: '-0.01em' }}>
+                  Widen what your advice can deliver
+                </h3>
+                <p style={{ fontSize: 14.5, lineHeight: 1.7, color: 'oklch(0.85 0.02 260)', margin: '0 0 20px' }}>
+                  If you advise processors on liquid handling, thermal load or shelf life, FloUV extends what you can put
+                  in front of them — with the validation evidence to back the recommendation.
+                </p>
+                <Link
+                  to="/faq"
+                  style={{
+                    background: 'var(--flouv-green)',
+                    color: 'var(--flouv-green-ink)',
+                    padding: '14px 26px',
+                    borderRadius: 100,
+                    textDecoration: 'none',
+                    fontSize: 14,
+                    fontWeight: 700,
+                    display: 'inline-block',
+                  }}
+                >
+                  Talk to us about representation →
+                </Link>
+              </div>
+              <PartnerLogoSlot name="ELEFQ Market Solutions" />
+            </div>
+          </div>
+        </section>
+
         {/* CTA */}
         <section
           style={{
-            background: 'linear-gradient(135deg, oklch(0.18 0.025 255), oklch(0.22 0.06 290))',
+            background: 'linear-gradient(135deg, var(--flouv-blue), var(--flouv-blue-deep))',
             padding: '120px 56px',
             textAlign: 'center',
           }}
         >
           <h2
             style={{
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "'Inter', sans-serif",
               fontSize: 40,
               fontWeight: 700,
               margin: '0 0 20px',
               letterSpacing: '-0.01em',
-              color: 'oklch(0.98 0.005 250)',
+              color: 'oklch(0.98 0 0)',
             }}
           >
             Got any questions?
           </h2>
-          <p style={{ fontSize: 17, color: 'oklch(0.75 0.02 260)', margin: '0 0 36px', maxWidth: 560, marginLeft: 'auto', marginRight: 'auto' }}>
+          <p style={{ fontSize: 17, color: 'oklch(1 0 0 / 0.7)', margin: '0 0 36px', maxWidth: 560, marginLeft: 'auto', marginRight: 'auto' }}>
             Reach out directly to our leadership team via email or LinkedIn above, or send a general inquiry
             below.
           </p>
           <a
             href="mailto:pankajuttarwar@flouv.us"
             style={{
-              background: 'oklch(0.98 0.005 250)',
-              color: 'oklch(0.16 0.02 260)',
+              background: 'var(--flouv-green)',
+              color: 'var(--flouv-green-ink)',
               padding: '17px 34px',
               borderRadius: 3,
               textDecoration: 'none',

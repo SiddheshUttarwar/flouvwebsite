@@ -13,7 +13,7 @@ export default function Blog() {
       try {
         const res = await fetch(API_URL);
         const data = await res.json();
-        setPosts(data);
+        setPosts(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error('Failed to fetch blogs', err);
       } finally {
@@ -25,30 +25,30 @@ export default function Blog() {
 
   return (
     <Layout active="Blog">
-      <main style={{ padding: '90px 56px 120px', background: 'oklch(0.985 0.004 250)', minHeight: '100vh' }}>
+      <main style={{ padding: '90px 56px 120px', background: 'var(--flouv-white)', minHeight: '100vh' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ marginBottom: 60, textAlign: 'center' }}>
             <h1
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Inter', sans-serif",
                 fontSize: 56,
                 fontWeight: 700,
                 margin: '0 0 16px',
                 letterSpacing: '-0.02em',
-                color: 'oklch(0.16 0.03 265)',
+                color: 'var(--flouv-blue)',
               }}
             >
               Blog & Insights
             </h1>
-            <p style={{ fontSize: 19, color: 'oklch(0.4 0.01 260)', margin: 0 }}>
+            <p style={{ fontSize: 19, color: 'var(--flouv-text)', margin: 0 }}>
               The latest on non-thermal UV-C processing.
             </p>
           </div>
 
           {loading ? (
-            <div style={{ textAlign: 'center', color: 'oklch(0.5 0.01 250)' }}>Loading posts...</div>
+            <div style={{ textAlign: 'center', color: 'var(--flouv-muted)' }}>Loading posts...</div>
           ) : posts.length === 0 ? (
-            <div style={{ textAlign: 'center', color: 'oklch(0.5 0.01 250)' }}>No posts available yet. Check back soon!</div>
+            <div style={{ textAlign: 'center', color: 'var(--flouv-muted)' }}>No posts available yet. Check back soon!</div>
           ) : (
             <div
               style={{
@@ -69,15 +69,15 @@ export default function Blog() {
                         objectFit: 'cover',
                         marginBottom: 24,
                         borderRadius: 8,
-                        boxShadow: '0 10px 30px oklch(0.4 0.02 260 / 0.1)',
+                        boxShadow: '0 10px 30px oklch(0.3 0.05 264 / 0.1)',
                       }}
                     />
                   </Link>
                   <div
                     style={{
-                      fontFamily: "'IBM Plex Sans', sans-serif",
+                      fontFamily: "'Inter', sans-serif",
                       fontSize: 12,
-                      color: 'oklch(0.5 0.01 250)',
+                      color: 'var(--flouv-muted)',
                       marginBottom: 12,
                       letterSpacing: '0.05em',
                     }}
@@ -86,10 +86,10 @@ export default function Blog() {
                   </div>
                   <h3
                     style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontFamily: "'Inter', sans-serif",
                       fontSize: 26,
                       fontWeight: 600,
-                      color: 'oklch(0.18 0.02 260)',
+                      color: 'var(--flouv-blue)',
                       margin: '0 0 16px',
                       lineHeight: 1.3,
                     }}
@@ -101,12 +101,12 @@ export default function Blog() {
                   <Link
                     to={`/blog/${post.id}`}
                     style={{
-                      fontFamily: "'IBM Plex Sans', sans-serif",
+                      fontFamily: "'Inter', sans-serif",
                       fontSize: 13,
                       fontWeight: 600,
-                      color: 'oklch(0.55 0.19 295)',
+                      color: 'var(--flouv-blue)',
                       textDecoration: 'none',
-                      borderBottom: '1px solid oklch(0.55 0.19 295)',
+                      borderBottom: '1px solid var(--flouv-blue)',
                       paddingBottom: 2,
                     }}
                   >
