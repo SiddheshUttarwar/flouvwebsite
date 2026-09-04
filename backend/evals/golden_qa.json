@@ -1,0 +1,77 @@
+[
+  {
+    "question": "How does FloUV inactivate microorganisms at a molecular level?",
+    "expected_keywords": ["dna", "rna", "thymine", "pyrimidine"],
+    "expect_fallback": false
+  },
+  {
+    "question": "What flow design lets FloUV treat opaque liquids uniformly?",
+    "expected_keywords": ["serpentine", "dean", "vortex", "radial"],
+    "expect_fallback": false
+  },
+  {
+    "question": "What is the FloUV reactor tubing made of?",
+    "expected_keywords": ["fep", "uv-transparent", "uv-c"],
+    "expect_fallback": false
+  },
+  {
+    "question": "What overall pathogen log reduction does FloUV achieve?",
+    "expected_keywords": ["5", "7", "log", "hccp", "hacc"],
+    "expect_fallback": false
+  },
+  {
+    "question": "What log reduction has FloUV validated for dairy against Salmonella and E. coli O157:H7?",
+    "expected_keywords": ["5-log", "salmonella", "e. coli", "o157"],
+    "expect_fallback": false
+  },
+  {
+    "question": "Does FloUV preserve lactoferrin in milk?",
+    "expected_keywords": ["lactoferrin", "raw milk"],
+    "expect_fallback": false
+  },
+  {
+    "question": "What pathogens has FloUV validated log reduction for in juices?",
+    "expected_keywords": ["e. coli", "salmonella", "hacc"],
+    "expect_fallback": false
+  },
+  {
+    "question": "How much energy does FloUV save versus thermal pasteurization for beverages?",
+    "expected_keywords": ["kwh", "90%", "eeo"],
+    "expect_fallback": false
+  },
+  {
+    "question": "Who is FloUV's Chief Technology Officer?",
+    "expected_keywords": ["ankit patras"],
+    "expect_fallback": false
+  },
+  {
+    "question": "How often does FloUV's system need CIP cycles?",
+    "expected_keywords": ["24", "hour"],
+    "expect_fallback": false
+  },
+  {
+    "question": "What apple cider studies has FloUV validated?",
+    "expected_keywords": ["alicyclobacillus", "e. coli", "apple cider"],
+    "expect_fallback": false
+  },
+  {
+    "question": "Does FloUV use heat or pressure to achieve safety?",
+    "expected_keywords": ["non-thermal", "without heat", "no heat"],
+    "expect_fallback": false
+  },
+  {
+    "question": "What validation methodology backs FloUV's claims?",
+    "expected_keywords": ["dose-response", "biodosimetry", "reduction equivalent fluence", "ref"],
+    "expect_fallback": false
+  },
+  {
+    "question": "What is FloUV's stock ticker symbol?",
+    "expected_keywords": [],
+    "expect_fallback": true
+  },
+  {
+    "question": "What is the exact lamp wattage FloUV's system uses?",
+    "expected_keywords": [],
+    "expect_fallback": true
+  }
+]

@@ -20,7 +20,13 @@ import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from backend.models import Base
+from backend.database import DATABASE_URL
 target_metadata = Base.metadata
+
+# Ensure migrations run against the SAME database the app uses (defaults to the
+# absolute backend/flouv.db path, or DATABASE_URL if set), instead of the
+# working-directory-relative URL in alembic.ini.
+config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

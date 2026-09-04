@@ -1,0 +1,73 @@
+"""Central place for RAG pipeline tunables. Everything here can be overridden
+via environment variables; hardcoded defaults are sane for a small KB
+(low hundreds of chunks) on a single small Render instance."""
+import os
+
+BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# --- Stage 1: ingest + normalize ---
+KB_SIDECAR_PATH = os.getenv("KB_SIDECAR_PATH", os.path.join(BACKEND_DIR, "kb_sidecar.json"))
+CHUNK_MIN_CHARS = int(os.getenv("CHUNK_MIN_CHARS", "50"))
+# Bulk-ingest tunables (Drive folder can be 100s-1000s of files) — keeps each
+# embedding request and Drive download batch to a sane size regardless of
+# per-account rate limits.
+DRIVE_DOWNLOAD_CONCURRENCY = int(os.getenv("DRIVE_DOWNLOAD_CONCURRENCY", "8"))
+EMBED_BATCH_SIZE = int(os.getenv("EMBED_BATCH_SIZE", "100"))
+
+# --- Stage 2: hybrid retrieval ---
+# gemini-embedding-001, NOT gemini-embedding-2 — the -2 model aggregates a
+# batch of texts into one pooled vector rather than one per input, which would
+# silently break per-chunk retrieval (see rag/embeddings.py).
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "gemini-embedding-001")
+RETRIEVAL_K_BM25 = int(os.getenv("RETRIEVAL_K_BM25", "15"))
+RETRIEVAL_K_EMBED = int(os.getenv("RETRIEVAL_K_EMBED", "15"))
+RETRIEVAL_FUSED_K = int(os.getenv("RETRIEVAL_FUSED_K", "10"))  # candidates handed to reranker
+RRF_K = int(os.getenv("RRF_K", "60"))  # standard RRF smoothing constant
+RRF_WEIGHT_BM25 = float(os.getenv("RRF_WEIGHT_BM25", "0.4"))
+RRF_WEIGHT_EMBED = float(os.getenv("RRF_WEIGHT_EMBED", "0.6"))
+
+# --- Stage 3: ANN + reranking ---
+# Only used by rag/rerank.py's llm_rerank() (evals path) — the production hot
+# path (fused_order_rerank) makes no API call at all.
+RERANK_MODEL = os.getenv("RERANK_MODEL", "gemini-3.1-flash-lite")
+RERANK_TOP_N = int(os.getenv("RERANK_TOP_N", "4"))  # kept after reranking, fed to generation
+
+# --- Stage 4: source confidence scoring ---
+CONFIDENCE_AGREEMENT_BONUS = float(os.getenv("CONFIDENCE_AGREEMENT_BONUS", "0.1"))
+CONFIDENCE_WEAK_CONSENSUS_PENALTY = float(os.getenv("CONFIDENCE_WEAK_CONSENSUS_PENALTY", "0.15"))
+CONFIDENCE_PER_CHUNK_FLOOR = float(os.getenv("CONFIDENCE_PER_CHUNK_FLOOR", "0.4"))
+
+# --- Stage 5/6: constrained generation + citations ---
+# gemini-3.1-flash-lite: cheapest currently-available Gemini tier ($0.25/$1.50
+# per 1M tokens) — gemini-2.5-flash-lite is deprecated for new API keys.
+GENERATION_MODEL = os.getenv("GENERATION_MODEL", "gemini-3.1-flash-lite")
+GENERATION_MAX_TOKENS = int(os.getenv("GENERATION_MAX_TOKENS", "400"))
+VALID_IMAGES = ("dairy.png", "water.png", "uv.png")
+
+# --- Stage 7: hallucination fallback ---
+CONFIDENCE_FALLBACK_THRESHOLD = float(os.getenv("CONFIDENCE_FALLBACK_THRESHOLD", "0.45"))
+FALLBACK_IMAGE = "uv.png"
+FALLBACK_TEXT = (
+    "I don't have enough verified information in the FloUV knowledge base to answer "
+    "that confidently. Please reach out to our team directly for details on this."
+)
+
+# --- Stage 9: caching + memory ---
+CACHE_DIR = os.getenv("CACHE_DIR", os.path.join(BACKEND_DIR, "cache_data"))
+CHROMA_DIR = os.getenv("CHROMA_DIR", os.path.join(BACKEND_DIR, "chroma_data"))
+# Renamed from "flouv_kb" — the old collection holds 1536-dim OpenAI vectors;
+# gemini-embedding-001 produces 3072-dim vectors, which Chroma can't mix into
+# the same collection. A fresh name forces a clean rebuild via /api/ingest-gdrive
+# instead of dimension-mismatch errors against stale OpenAI-embedded data.
+CHROMA_COLLECTION = os.getenv("CHROMA_COLLECTION", "flouv_kb_gemini")
+CHAT_HISTORY_LIMIT = int(os.getenv("CHAT_HISTORY_LIMIT", "4"))
+CHAT_QUERY_MAX_CHARS = int(os.getenv("CHAT_QUERY_MAX_CHARS", "400"))
+CONTEXT_MAX_CHARS = int(os.getenv("CONTEXT_MAX_CHARS", "3000"))
+
+# --- Stage 10: observability ---
+# Rough $ per 1K tokens, input/output. Manually maintained — not auto-fetched
+# from Google's pricing page. Update when models/prices change.
+PRICING_PER_1K = {
+    "gemini-3.1-flash-lite": {"prompt": 0.00025, "completion": 0.0015},
+    "gemini-embedding-001": {"prompt": 0.00015, "completion": 0.0},
+}

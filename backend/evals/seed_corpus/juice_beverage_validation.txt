@@ -1,0 +1,9 @@
+FloUV Juice and Beverage Validation Summary
+
+FloUV delivers pasteurization-equivalent microbial safety in juices through a non-thermal, UV-C-based process engineered for both clear and turbid matrices. Using validated dose delivery and hydrodynamic mixing, the system achieves 5-log reduction of key juice pathogens, including E. coli O157:H7 and Salmonella spp., in alignment with FDA Juice HACCP requirements.
+
+FloUV's validated case studies for fresh apple cider include Alicyclobacillus acidoterrestris spore inactivation and E. coli O157:H7 inactivation. Apple juice has full bioactive-preservation validation studies, and watermelon juice has simulated results using the same dose-validation methodology.
+
+Energy consumption in FloUV UV-C processing is quantified using Electrical Energy per Order (EEO), which measures the kilowatt-hours required to achieve a 1-log microbial reduction per cubic meter of product. FloUV achieves pasteurization-equivalent safety using only 1-2 kWh/m3, delivering up to 90% lower energy use than conventional thermal pasteurization for beverage processing, since it avoids steam generation, heat exchangers, and cooling loops.
+
+FloUV supports next-generation beverage processing, including plant-based milks, coconut water, energy drinks, and sugar syrups, delivering non-thermal, continuous microbial reduction that preserves nutrients, flavor, and functional performance without heat.

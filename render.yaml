@@ -1,13 +1,40 @@
+databases:
+  - name: flouv-db
+    databaseName: flouv
+    user: flouv
+    plan: free
+    # Free Postgres expires 30 days after creation and needs to be recreated
+    # (or upgraded to a paid plan) before then — nothing auto-renews it.
+
 services:
   - type: web
     name: flouv-web
     env: python
+    plan: free
+    # DELIBERATE CHOICE: free web services can't attach a persistent disk, so
+    # uploads/ (blog images), chroma_data/ (RAG vector store), and
+    # credentials.json/token.json (Google Drive OAuth — can't be re-obtained
+    # headlessly) are all wiped on every restart/redeploy, not just
+    # occasionally. Also spins down after 15 min idle (30-60s cold start on
+    # the next request). Fine for testing the deploy pipeline itself; upgrade
+    # to at least `starter` ($7/mo, restores the disk) before relying on
+    # uploads or the chatbot's knowledge base actually persisting.
     buildCommand: "npm install && npm run build && pip install -r requirements.txt && alembic upgrade head"
     startCommand: "cd backend && uvicorn main:app --host 0.0.0.0 --port 10000"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
-    disk:
-      name: sqlite-data
-      mountPath: /opt/render/project/src/backend
-      sizeGB: 1
+      - key: DATABASE_URL
+        fromDatabase:
+          name: flouv-db
+          property: connectionString
+      # Secrets below are prompted for once at Blueprint creation and stored
+      # in Render's dashboard — never written into this file or git.
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GOOGLE_DRIVE_FOLDER_ID
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: BOT_API_KEY
+        sync: false

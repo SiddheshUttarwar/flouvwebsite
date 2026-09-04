@@ -1,0 +1,9 @@
+FloUV Technology Overview: Biology, Chemistry, and Physics
+
+FloUV uses non-thermal UV-C light to inactivate microorganisms at the molecular level by directly targeting their DNA and RNA. When microbes are exposed to UV-C wavelengths, the energy induces the formation of thymine and pyrimidine dimers in their genetic material, disrupting the replication and transcription pathways essential for cell survival. By preventing microorganisms from reproducing, FloUV renders bacteria, yeasts, molds, and viruses non-viable, achieving microbial safety without heat or chemicals.
+
+FloUV preserves food chemistry by achieving microbial safety without thermal stress, which is the primary driver of nutrient and bioactive loss in conventional processing. By avoiding high temperatures, the process minimizes protein denaturation, reduces heat-accelerated oxidation, and limits reactions such as Maillard browning that alter flavor and nutritional quality. FloUV is a non-thermal process, meaning it never applies heat or pressure to the product to achieve microbial safety.
+
+At the core of the FloUV platform is a patented serpentine flow-path design engineered to create controlled turbulence and continuous radial mixing in opaque and viscous liquids, using Dean-vortex circulation. This flow behavior ensures that all fluid elements are repeatedly brought into the UV-C exposure zone, eliminating channeling and stagnant regions common in conventional UV systems. The reactor tubing is made of UV-transparent FEP, chosen for its high optical clarity at germicidal UV-C wavelengths.
+
+FloUV's validation methodology relies on dose-response modeling, biodosimetry, and Reduction Equivalent Fluence (REF) analysis, the same rigor used to validate UV-C performance in opaque liquids, producing repeatable and auditable microbial-safety data.

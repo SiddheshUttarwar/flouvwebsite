@@ -9,12 +9,22 @@ env/
 
 # Database
 backend/flouv.db
+/flouv.db
+
+# RAG pipeline: persistent local state, not committed
+backend/chroma_data/
+backend/cache_data/
+backend/kb_sidecar.json
 
 # Node
 node_modules/
 dist/
 dist-ssr/
 *.local
+
+# Locally-downloaded tool binaries (e.g. a platform-specific Node runtime) —
+# never belongs in git regardless of what pulled it in.
+.localtools/
 
 # OS
 .DS_Store
