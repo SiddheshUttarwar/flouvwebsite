@@ -1,8 +1,10 @@
 import Layout from '../components/Layout.jsx';
 import { useState } from 'react';
 
+const PLACEHOLDER_EMBED_URL = "https://lookerstudio.google.com/embed/reporting/0B5n.../page/1M";
+
 export default function Dashboard() {
-  const [embedUrl] = useState("https://lookerstudio.google.com/embed/reporting/0B5n.../page/1M");
+  const [embedUrl] = useState(import.meta.env.VITE_LOOKER_EMBED_URL || PLACEHOLDER_EMBED_URL);
 
   return (
     <Layout active="Dashboard">
@@ -42,7 +44,7 @@ export default function Dashboard() {
             />
             
             {/* Overlay explaining how to update it for the user (only shown if using placeholder) */}
-            {embedUrl.includes("0B5n") && (
+            {embedUrl === PLACEHOLDER_EMBED_URL && (
               <div style={{
                 position: 'absolute',
                 inset: 0,
@@ -57,9 +59,9 @@ export default function Dashboard() {
               }}>
                 <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 24, marginBottom: 16 }}>Placeholder Dashboard</h2>
                 <p style={{ maxWidth: 600, color: 'var(--flouv-text)', lineHeight: 1.6 }}>
-                  This is where your Looker Studio report will appear! 
+                  This is where your Looker Studio report will appear!
                   <br/><br/>
-                  To connect your real data, paste your <strong>Looker Studio Embed URL</strong> into the chat.
+                  To connect your real data, set <strong>VITE_LOOKER_EMBED_URL</strong> to your Looker Studio Embed URL in the frontend environment and rebuild.
                 </p>
               </div>
             )}

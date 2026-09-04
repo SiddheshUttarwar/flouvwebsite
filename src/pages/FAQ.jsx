@@ -27,7 +27,7 @@ export default function FAQ() {
     <Layout active="FAQ">
       <div style={{ fontFamily: "'Inter', sans-serif", background: 'var(--flouv-white)', color: 'var(--flouv-ink)' }}>
         {/* ASK FLOUV — AI-powered question bar */}
-        <section style={{ background: 'var(--flouv-bg-soft)', padding: '110px 24px 120px' }}>
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '78px 24px 84px' }}>
           <div style={{ maxWidth: 820, margin: '0 auto', textAlign: 'center' }}>
             <div
               style={{

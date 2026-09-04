@@ -1,36 +1,63 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout.jsx';
+import InquiryModal from '../components/InquiryModal.jsx';
 import ceoPhoto from '../../uploads/pankajttarwar.webp';
 import ctoPhoto from '../../uploads/AnkitPatras2.webp';
+import elefqLogo from '../../uploads/ELEFQ_Logo.png';
+import elefqWordmark from '../../uploads/ELEFQ_Wordmark.png';
+
+const PERFORMANCE_ICONS = {
+  // Falling demand — bar heights step down, with the trend line calling it out
+  efficiency: (
+    <>
+      <path d="M5 33h30" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+      <path
+        d="M10 33V16M20 33v-8M30 33v-3"
+        stroke="currentColor"
+        strokeWidth="3.4"
+        strokeLinecap="round"
+      />
+      <path
+        d="M8 10.5 30 22.5"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        opacity="0.55"
+      />
+      <path
+        d="M24.5 22.2 30.6 22.8 30 16.7"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.55"
+      />
+    </>
+  ),
+  // An inline module dropped into a line that already exists
+  integration: (
+    <>
+      <path d="M3 20h9M28 20h9" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+      <rect x="12" y="11" width="16" height="18" rx="3.5" fill="none" stroke="currentColor" strokeWidth="2.4" />
+      <path d="M17.5 16.5h5M17.5 23.5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </>
+  ),
+};
 
 const PERFORMANCE = [
   {
     title: 'Process efficiency',
     body: 'FloUV delivers precise, non-thermal UV-C treatment with low energy demand — reducing thermal load, preserving product value, and improving overall operational efficiency in complex liquid processing.',
-    swatch: 'var(--flouv-blue-tint)',
-    dot: { shape: 'bar', color: 'var(--flouv-blue-soft)' },
+    icon: 'efficiency',
   },
   {
     title: 'Easy integration',
     body: 'FloUV is designed for seamless integration into existing processing lines, working alongside thermal, membrane, and aseptic systems. Our team provides end-to-end technical support, from system integration and commissioning to validation and scale-up.',
-    swatch: 'var(--flouv-blue-tint)',
-    dot: { shape: 'square', color: 'var(--flouv-blue-soft)' },
+    icon: 'integration',
   },
 ];
-
-function BenefitDot({ dot }) {
-  const base = { flexShrink: 0 };
-  if (dot.shape === 'circle') {
-    return <span style={{ ...base, width: 16, height: 16, borderRadius: '50%', background: dot.color }} />;
-  }
-  if (dot.shape === 'square') {
-    return <span style={{ ...base, width: 16, height: 16, borderRadius: 3, background: dot.color }} />;
-  }
-  if (dot.shape === 'bar') {
-    return <span style={{ ...base, width: 16, height: 4, borderRadius: 2, background: dot.color }} />;
-  }
-  return <span style={{ ...base, width: 12, height: 12, border: `2px solid ${dot.color}`, borderRadius: '50%' }} />;
-}
 
 const TEAM = [
   {
@@ -135,7 +162,39 @@ function PartnerLogoSlot({ name }) {
   );
 }
 
+// ELEFQ supplied two marks — the elephant logo and the ELEFQ wordmark. Both ship on a
+// white background, so they sit on a white tile rather than straight on the dark card.
+function ElefqLogos() {
+  return (
+    <div
+      style={{
+        background: 'oklch(1 0 0)',
+        borderRadius: 10,
+        minHeight: 104,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
+        padding: '16px 14px',
+      }}
+    >
+      <img
+        src={elefqLogo}
+        alt="ELEFQ Market Solutions logo"
+        style={{ height: 56, width: 56, objectFit: 'contain', flexShrink: 0 }}
+      />
+      <img
+        src={elefqWordmark}
+        alt="ELEFQ Market Solutions wordmark"
+        style={{ height: 36, width: 'auto', maxWidth: '100%', objectFit: 'contain' }}
+      />
+    </div>
+  );
+}
+
 export default function About() {
+  const [modal, setModal] = useState(null);
+
   return (
     <Layout active="About">
       <div style={{ fontFamily: "'Inter', sans-serif", background: 'var(--flouv-white)', color: 'var(--flouv-ink)' }}>
@@ -143,7 +202,7 @@ export default function About() {
         <section
           style={{
             background: 'linear-gradient(180deg, var(--flouv-bg-soft) 0%, var(--flouv-blue-tint) 100%)',
-            padding: '90px 56px 70px',
+            padding: '68px 56px 52px',
           }}
         >
           <div style={{ maxWidth: 820, margin: '0 auto', textAlign: 'center' }}>
@@ -173,11 +232,11 @@ export default function About() {
         </section>
 
         {/* PERFORMANCE MATTERS */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '110px 56px 0' }}>
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '76px 56px 0' }}>
           <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
             PERFORMANCE MATTERS
           </div>
-          <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 38, fontWeight: 700, margin: '0 0 56px', letterSpacing: '-0.01em' }}>
+          <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 38, fontWeight: 700, margin: '0 0 40px', letterSpacing: '-0.01em' }}>
             Not a lab curiosity — a line-ready platform
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, marginBottom: 32 }}>
@@ -185,17 +244,20 @@ export default function About() {
               <div key={benefit.title} style={{ padding: 36, border: '1px solid var(--flouv-border)', borderRadius: 10 }}>
                 <div
                   style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 10,
-                    background: benefit.swatch,
+                    width: 56,
+                    height: 56,
+                    borderRadius: 14,
+                    background: 'var(--flouv-blue-tint)',
+                    color: 'var(--flouv-blue)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     marginBottom: 20,
                   }}
                 >
-                  <BenefitDot dot={benefit.dot} />
+                  <svg width="32" height="32" viewBox="0 0 40 40" aria-hidden="true">
+                    {PERFORMANCE_ICONS[benefit.icon]}
+                  </svg>
                 </div>
                 <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 19, fontWeight: 600, margin: '0 0 10px' }}>
                   {benefit.title}
@@ -210,11 +272,11 @@ export default function About() {
         </section>
 
         {/* TEAM */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '110px 56px' }}>
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '76px 56px' }}>
           <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
             LEADERSHIP
           </div>
-          <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 34, fontWeight: 700, margin: '0 0 56px', letterSpacing: '-0.01em' }}>
+          <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 34, fontWeight: 700, margin: '0 0 40px', letterSpacing: '-0.01em' }}>
             The team behind FloUV
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 32 }}>
@@ -279,7 +341,7 @@ export default function About() {
         </section>
 
         {/* PARTNERSHIP */}
-        <section style={{ background: 'var(--flouv-bg-soft)', padding: '110px 56px' }}>
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '76px 56px' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               PARTNER WITH FLOUV
@@ -287,7 +349,7 @@ export default function About() {
             <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 34, fontWeight: 700, margin: '0 0 20px', letterSpacing: '-0.01em' }}>
               Together we can build novel processes that solve major industrial problems
             </h2>
-            <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--flouv-text)', maxWidth: 820, margin: '0 0 48px' }}>
+            <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--flouv-text)', maxWidth: 820, margin: '0 0 36px' }}>
               The hardest problems in liquid processing are not waiting on a better pump. They are waiting on a
               process that does not exist yet — and those get built jointly, by people who bring the problem and
               people who bring the science. That is what a FloUV partnership is for. It takes several forms, and
@@ -362,7 +424,7 @@ export default function About() {
         </section>
 
         {/* CASE STUDY — WHC LABS */}
-        <section style={{ padding: '90px 56px' }}>
+        <section style={{ padding: '68px 56px' }}>
           <div style={{ maxWidth: 940, margin: '0 auto' }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               CASE STUDY · WHC LABS
@@ -403,21 +465,22 @@ export default function About() {
                   Every novel process we have built started this way — a measurement on a real stream, and two teams
                   willing to find out. Bring us the problem the industry has learned to live with.
                 </p>
-                <Link
-                  to="/about"
+                <button
+                  onClick={() => setModal('collaboration')}
                   style={{
                     background: 'var(--flouv-green)',
                     color: 'var(--flouv-green-ink)',
+                    border: 'none',
                     padding: '14px 26px',
                     borderRadius: 100,
-                    textDecoration: 'none',
                     fontSize: 14,
                     fontWeight: 700,
-                    display: 'inline-block',
+                    fontFamily: "'Inter', sans-serif",
+                    cursor: 'pointer',
                   }}
                 >
                   Start a collaboration →
-                </Link>
+                </button>
               </div>
               <PartnerLogoSlot name="WHC Labs" />
             </div>
@@ -425,7 +488,7 @@ export default function About() {
         </section>
 
         {/* CASE STUDY — JUICING SYSTEMS */}
-        <section style={{ background: 'var(--flouv-bg-soft)', padding: '90px 56px' }}>
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '68px 56px' }}>
           <div style={{ maxWidth: 940, margin: '0 auto' }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               CASE STUDY · JUICING SYSTEMS
@@ -466,21 +529,22 @@ export default function About() {
                   If you supply or service equipment in food and beverage processing, FloUV widens what you can offer
                   without changing how you work — innovation your customers get from the people they already call.
                 </p>
-                <Link
-                  to="/about"
+                <button
+                  onClick={() => setModal('distribution')}
                   style={{
                     background: 'var(--flouv-green)',
                     color: 'var(--flouv-green-ink)',
+                    border: 'none',
                     padding: '14px 26px',
                     borderRadius: 100,
-                    textDecoration: 'none',
                     fontSize: 14,
                     fontWeight: 700,
-                    display: 'inline-block',
+                    fontFamily: "'Inter', sans-serif",
+                    cursor: 'pointer',
                   }}
                 >
                   Explore a distribution partnership →
-                </Link>
+                </button>
               </div>
               <PartnerLogoSlot name="Juicing Systems" />
             </div>
@@ -488,7 +552,7 @@ export default function About() {
         </section>
 
         {/* CASE STUDY — ELEFQ */}
-        <section style={{ padding: '90px 56px' }}>
+        <section style={{ padding: '68px 56px' }}>
           <div style={{ maxWidth: 940, margin: '0 auto' }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               CASE STUDY · ELEFQ MARKET SOLUTIONS
@@ -531,23 +595,24 @@ export default function About() {
                   If you advise processors on liquid handling, thermal load or shelf life, FloUV extends what you can put
                   in front of them — with the validation evidence to back the recommendation.
                 </p>
-                <Link
-                  to="/faq"
+                <button
+                  onClick={() => setModal('representation')}
                   style={{
                     background: 'var(--flouv-green)',
                     color: 'var(--flouv-green-ink)',
+                    border: 'none',
                     padding: '14px 26px',
                     borderRadius: 100,
-                    textDecoration: 'none',
                     fontSize: 14,
                     fontWeight: 700,
-                    display: 'inline-block',
+                    fontFamily: "'Inter', sans-serif",
+                    cursor: 'pointer',
                   }}
                 >
                   Talk to us about representation →
-                </Link>
+                </button>
               </div>
-              <PartnerLogoSlot name="ELEFQ Market Solutions" />
+              <ElefqLogos />
             </div>
           </div>
         </section>
@@ -556,7 +621,7 @@ export default function About() {
         <section
           style={{
             background: 'linear-gradient(135deg, var(--flouv-blue), var(--flouv-blue-deep))',
-            padding: '120px 56px',
+            padding: '84px 56px',
             textAlign: 'center',
           }}
         >
@@ -576,23 +641,25 @@ export default function About() {
             Reach out directly to our leadership team via email or LinkedIn above, or send a general inquiry
             below.
           </p>
-          <a
-            href="mailto:pankajuttarwar@flouv.us"
+          <button
+            onClick={() => setModal('general')}
             style={{
               background: 'var(--flouv-green)',
               color: 'var(--flouv-green-ink)',
+              border: 'none',
               padding: '17px 34px',
               borderRadius: 3,
-              textDecoration: 'none',
               fontSize: 15,
               fontWeight: 700,
-              display: 'inline-block',
+              fontFamily: "'Inter', sans-serif",
+              cursor: 'pointer',
             }}
           >
-            Email FloUV
-          </a>
+            Send us a message
+          </button>
         </section>
       </div>
+      {modal && <InquiryModal mode={modal} onClose={() => setModal(null)} />}
     </Layout>
   );
 }

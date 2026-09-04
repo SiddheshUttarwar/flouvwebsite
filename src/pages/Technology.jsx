@@ -1,6 +1,35 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout.jsx';
+import InquiryModal from '../components/InquiryModal.jsx';
 import techHeroBanner from '../../uploads/tech-hero-banner.webp';
+import reactor650 from '../../uploads/reactor-650.jpg';
+import reactor2000 from '../../uploads/reactor-2000.jpg';
+import reactor2500 from '../../uploads/reactor-2500.jpg';
+
+const STANDARD_RANGE = [
+  {
+    image: reactor650,
+    cells: 'ONE CELL',
+    model: 'FloUV 640',
+    flow: '~640 LPH',
+    body: 'The validated reactor cell on its own. Every dose figure FloUV quotes is established on this unit, which is why it doubles as the pilot and validation machine.',
+  },
+  {
+    image: reactor2000,
+    cells: 'THREE CELLS',
+    model: 'FloUV 2000',
+    flow: '~2,000 LPH',
+    body: 'Three cells fed in parallel from one manifold. Each still runs at the velocity, residence time and dose it was validated at — there are simply three of them.',
+  },
+  {
+    image: reactor2500,
+    cells: 'FOUR CELLS',
+    model: 'FloUV 2500',
+    flow: '~2,500 LPH',
+    body: 'The largest single-platform build. Four cells can run as four parallel single-pass trains for flow, one four-pass train for dose, or two trains of two \u2014 same hardware, very different rated duty.',
+  },
+];
 
 const PILLAR_ICONS = {
   // Double helix — DNA-level inactivation
@@ -321,6 +350,8 @@ function FlowComparison() {
 }
 
 export default function Technology() {
+  const [meetingOpen, setMeetingOpen] = useState(false);
+
   return (
     <Layout active="Technology">
       <div style={{ fontFamily: "'Inter', sans-serif", background: 'var(--flouv-white)', color: 'var(--flouv-ink)' }}>
@@ -328,7 +359,7 @@ export default function Technology() {
         <section
           style={{
             background: 'linear-gradient(180deg, var(--flouv-bg-soft) 0%, var(--flouv-border-soft) 100%)',
-            padding: '90px 56px 70px',
+            padding: '68px 56px 52px',
           }}
         >
           <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center' }}>
@@ -366,12 +397,20 @@ export default function Technology() {
         </section>
 
         {/* THREE PILLARS */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '110px 56px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '76px 56px' }}>
+          <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
             {PILLARS.map((pillar) => (
               <div
                 key={pillar.tag}
-                style={{ padding: '36px 36px 32px', borderTop: `3px solid ${pillar.accent}`, background: 'var(--flouv-white)' }}
+                style={{
+                  padding: '36px 36px 32px',
+                  borderTop: `3px solid ${pillar.accent}`,
+                  border: '1px solid oklch(0.90 0.02 258)',
+                  borderTopWidth: 3,
+                  borderTopColor: pillar.accent,
+                  borderRadius: 14,
+                  background: 'var(--flouv-white)',
+                }}
               >
                 <div
                   style={{
@@ -407,7 +446,7 @@ export default function Technology() {
         </section>
 
         {/* PROCESS OVERVIEW */}
-        <section style={{ background: 'linear-gradient(160deg, oklch(0.93 0.025 240), oklch(0.89 0.03 235))', padding: '110px 56px', color: 'oklch(0.22 0.03 250)' }}>
+        <section style={{ background: 'linear-gradient(160deg, oklch(0.93 0.025 240), oklch(0.89 0.03 235))', padding: '76px 56px', color: 'oklch(0.22 0.03 250)' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: 64 }}>
             <div>
               <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'oklch(0.45 0.04 240)', marginBottom: 12 }}>
@@ -444,7 +483,7 @@ export default function Technology() {
         </section>
 
         {/* TECHNICAL DEEP DIVE — COMPARISON */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '110px 56px' }}>
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '76px 56px' }}>
           <div style={{ textAlign: 'center', maxWidth: 820, margin: '0 auto 56px' }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               WHY CONVENTIONAL UV FALLS SHORT
@@ -463,7 +502,7 @@ export default function Technology() {
             </p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24 }}>
-            <div style={{ padding: 32, background: 'oklch(0.96 0.01 240)', border: '1px solid oklch(0.85 0.015 240)' }}>
+            <div style={{ padding: 32, borderRadius: 14, background: 'oklch(0.955 0.018 258)', border: '1px solid oklch(0.89 0.03 258)' }}>
               <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, fontWeight: 600, color: 'oklch(0.4 0.02 245)', marginBottom: 12 }}>
                 Conventional UV — straight-line exposure
               </div>
@@ -472,7 +511,7 @@ export default function Technology() {
                 enough to the light never receives a full dose.
               </p>
             </div>
-            <div style={{ padding: 32, background: 'linear-gradient(160deg, oklch(0.3 0.06 245), oklch(0.24 0.05 248))', border: '1px solid oklch(0.5 0.05 245 / 0.5)' }}>
+            <div style={{ padding: 32, borderRadius: 14, background: 'linear-gradient(160deg, oklch(0.33 0.13 264), oklch(0.23 0.14 264))', border: '1px solid oklch(1 0 0 / 0.18)' }}>
               <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, fontWeight: 600, color: 'oklch(0.85 0.03 240)', marginBottom: 12 }}>
                 FloUV — helical, Dean-vortex flow
               </div>
@@ -485,7 +524,8 @@ export default function Technology() {
         </section>
 
         {/* HOW IT WORKS */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px 110px' }}>
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '68px 56px 76px' }}>
+          <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ marginBottom: 56 }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               INSIDE THE SYSTEM
@@ -527,13 +567,14 @@ export default function Technology() {
               </div>
             ))}
           </div>
+          </div>
         </section>
 
         {/* VALUE PROPOSITION */}
         <section
           style={{
             background: 'linear-gradient(135deg, var(--flouv-blue) 0%, var(--flouv-blue-deep) 100%)',
-            padding: '110px 56px',
+            padding: '76px 56px',
             color: 'oklch(0.98 0 0)',
           }}
         >
@@ -544,7 +585,7 @@ export default function Technology() {
             <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 34, fontWeight: 700, margin: '0 0 20px', letterSpacing: '-0.01em' }}>
               What that engineering actually buys you
             </h2>
-            <p style={{ fontSize: 17, lineHeight: 1.7, color: 'oklch(0.85 0.02 260)', maxWidth: 720, margin: '0 0 56px' }}>
+            <p style={{ fontSize: 17, lineHeight: 1.7, color: 'oklch(0.85 0.02 260)', maxWidth: 720, margin: '0 0 40px' }}>
               Three outcomes a processor can hold us to — safety, quality and cost — each a consequence of the
               engineering above rather than a claim bolted on after it.
             </p>
@@ -583,20 +624,28 @@ export default function Technology() {
         </section>
 
         {/* VALIDATION & METHODOLOGY */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '110px 56px' }}>
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '76px 56px' }}>
           <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
             SCIENTIFIC RIGOR
           </div>
           <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 34, fontWeight: 700, margin: '0 0 20px', letterSpacing: '-0.01em' }}>
             Validated, not just claimed
           </h2>
-          <p style={{ fontSize: 16, lineHeight: 1.7, color: 'var(--flouv-text)', maxWidth: 760, margin: '0 0 48px' }}>
+          <p style={{ fontSize: 16, lineHeight: 1.7, color: 'var(--flouv-text)', maxWidth: 760, margin: '0 0 36px' }}>
             Every performance claim behind FloUV is backed by a repeatable, auditable validation process — not
             a single demo run.
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24 }}>
             {VALIDATION_TOPICS.map((topic) => (
-              <div key={topic.title} style={{ padding: 32, border: '1px solid var(--flouv-border)' }}>
+              <div
+                key={topic.title}
+                style={{
+                  padding: 32,
+                  background: 'var(--flouv-blue-tint)',
+                  border: '1px solid oklch(0.89 0.03 262)',
+                  borderRadius: 14,
+                }}
+              >
                 <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 19, fontWeight: 600, margin: '0 0 12px' }}>
                   {topic.title}
                 </h3>
@@ -607,7 +656,7 @@ export default function Technology() {
         </section>
 
         {/* APPLICATIONS */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px 110px' }}>
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '0 56px 76px' }}>
           <div style={{ maxWidth: 940, margin: '0 auto' }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               FLOUV APPLICATIONS
@@ -660,8 +709,74 @@ export default function Technology() {
           </div>
         </section>
 
+        {/* STANDARD RANGE */}
+        <section style={{ background: 'var(--flouv-blue-deep)', padding: '76px 56px', color: 'oklch(0.98 0 0)' }}>
+          <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-green)', marginBottom: 12 }}>
+              THE STANDARD RANGE
+            </div>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 34, fontWeight: 700, margin: '0 0 18px', letterSpacing: '-0.01em' }}>
+              From a single cell to a multi-cell standard reactor
+            </h2>
+            <p style={{ fontSize: 17, lineHeight: 1.7, color: 'oklch(0.85 0.02 260)', maxWidth: 780, margin: '0 0 36px' }}>
+              These are three different machines only in the way a terrace is three different houses. Each one is
+              the same validated reactor cell, counted differently — so what changes across the range is the
+              number of treatment paths running side by side, never the conditions inside any one of them.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+              {STANDARD_RANGE.map((unit) => (
+                <div
+                  key={unit.model}
+                  style={{
+                    background: 'var(--flouv-white)',
+                    borderRadius: 16,
+                    overflow: 'hidden',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <img
+                    src={unit.image}
+                    alt={`${unit.model} — ${unit.cells.toLowerCase()} UV-C reactor`}
+                    style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'contain', background: 'var(--flouv-white)', display: 'block' }}
+                  />
+                  <div style={{ padding: '4px 28px 30px' }}>
+                    <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.09em', color: 'var(--flouv-blue-soft)', marginBottom: 8 }}>
+                      {unit.cells}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: 21,
+                        fontWeight: 700,
+                        letterSpacing: '-0.01em',
+                        color: 'var(--flouv-ink)',
+                        whiteSpace: 'nowrap',
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {unit.model}
+                    </div>
+                    <div style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--flouv-blue)', whiteSpace: 'nowrap', margin: '2px 0 12px' }}>
+                      {unit.flow}
+                    </div>
+                    <p style={{ fontSize: 14, lineHeight: 1.65, color: 'var(--flouv-text)', margin: 0 }}>{unit.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <p style={{ fontSize: 16.5, lineHeight: 1.7, color: 'oklch(0.85 0.02 260)', maxWidth: 820, margin: '44px 0 0' }}>
+              The standard platform runs 640, 1,300, 2,000, 2,500 and 5,000 LPH — the same cell counted out to
+              eight at the top of the range. Beyond 5,000 LPH capacity grows incrementally in 5,000 LPH steps,
+              and still nothing about the reactor changes; the same cell simply keeps repeating.
+            </p>
+          </div>
+        </section>
+
         {/* MODULAR SCALE-UP */}
-        <section style={{ background: 'var(--flouv-bg-soft)', padding: '110px 56px' }}>
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '76px 56px' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               MODULAR SCALE-UP
@@ -676,7 +791,7 @@ export default function Technology() {
               together — and the system moves outside the conditions its microbial performance was ever
               demonstrated under.
             </p>
-            <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--flouv-text)', maxWidth: 780, margin: '0 0 48px' }}>
+            <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--flouv-text)', maxWidth: 780, margin: '0 0 36px' }}>
               So every high-volume FloUV system is built from the same core unicell reactor that was validated at
               pilot scale. A 35,000 LPH plant is not a scaled-up reactor — it is the identical validated cell,
               repeated. That is why dose work done on one unicell still means something at industrial throughput.
@@ -733,7 +848,7 @@ export default function Technology() {
         </section>
 
         {/* SUITABILITY CTA */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '110px 56px' }}>
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '76px 56px' }}>
           <div
             style={{
               background: 'var(--flouv-blue-deep)',
@@ -809,7 +924,7 @@ export default function Technology() {
         <section
           style={{
             background: 'linear-gradient(160deg, oklch(0.93 0.025 240), oklch(0.89 0.03 235))',
-            padding: '120px 56px',
+            padding: '84px 56px',
             textAlign: 'center',
           }}
         >
@@ -832,23 +947,25 @@ export default function Technology() {
             For any enquiries or questions regarding our technology and related projects, contact our Deep
             Tech department or book a meeting.
           </p>
-          <Link
-            to="/about"
+          <button
+            onClick={() => setMeetingOpen(true)}
             style={{
               background: 'var(--flouv-green)',
               color: 'var(--flouv-green-ink)',
+              border: 'none',
               padding: '17px 34px',
               borderRadius: 3,
-              textDecoration: 'none',
               fontSize: 15,
               fontWeight: 700,
-              display: 'inline-block',
+              fontFamily: "'Inter', sans-serif",
+              cursor: 'pointer',
             }}
           >
             Book a Meeting
-          </Link>
+          </button>
         </section>
       </div>
+      {meetingOpen && <InquiryModal mode="meeting" onClose={() => setMeetingOpen(false)} />}
     </Layout>
   );
 }

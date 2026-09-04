@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout.jsx';
+import InquiryModal from '../components/InquiryModal.jsx';
+import tabJuices from '../../uploads/tab-juices.webp';
+import tabBeverages from '../../uploads/tab-beverages.webp';
+import tabBrewing from '../../uploads/tab-brewing.webp';
+import tabBiofermentation from '../../uploads/tab-biofermentation.webp';
+import tabWater from '../../uploads/tab-water.webp';
 
 const INDUSTRIES = [
   {
@@ -8,10 +14,7 @@ const INDUSTRIES = [
     label: 'Dairy',
     accent: 'var(--flouv-blue-soft)',
     heroImage: 'https://images.squarespace-cdn.com/content/v1/667dcb8b5500c04d659a87e1/1769401046233-42HDU9B73ML0LRVE8ZWO/unsplash-image-kWvqJqzVUfs.jpg',
-    gallery: [
-      'https://images.squarespace-cdn.com/content/v1/667dcb8b5500c04d659a87e1/1769402973696-LHJ34N4LT7KHBY5LCJSI/unsplash-image-2dzhYsVhLVA.jpg',
-      'https://images.squarespace-cdn.com/content/v1/667dcb8b5500c04d659a87e1/1769406762529-SKFA3CJYFG0O1CCXYDE5/unsplash-image-P7MkoYvSnLI.jpg',
-    ],
+    gallery: [],
     title: 'Redefining dairy safety, without heat',
     intro:
       'FloUV applies precision UV-C dosing engineered for optically dense milk, delivering validated ≥5-log pathogen reduction while retaining lactoferrin, IgA, enzymes, and fresh dairy flavor — without thermal damage.',
@@ -52,17 +55,43 @@ const INDUSTRIES = [
       ],
       label: 'Ask about dairy',
     },
+    expert: {
+      eyebrow: 'EU CONTACT FOR FLOUV',
+      initials: 'DD',
+      name: 'Dirk Dubiel',
+      title: 'Market Access Expert, Process Technology & Business Development, DACH',
+      bio: [
+        'Dirk is an industry professional through and through: trained dairy technologist (Dipl. Ing. Dairy Food Technology), MBA, and former VP Business Line at GEA with responsibility for a 25 million euro P&L. He has led sales for Hydract in Denmark and driven business development at M&S Armaturen. He knows the dairy floor, the plant and the boardroom equally well, and he brings that credibility to every conversation.',
+        'As a native German speaker based in the DACH region, Dirk gives FloUV direct, unfiltered access to German, Austrian and Swiss decision makers.',
+      ],
+      role: 'He is EU dairy technical marketing and point of contact for EU dairy inquiries.',
+      tags: ['MARKET ACCESS', 'PROCESS TECHNOLOGY', 'GEA / MACHINERY'],
+      email: 'info@dubielconsulting.de',
+      ctaLabel: 'Connect with Dirk',
+      ctaSubject: 'EU dairy inquiry — FloUV non-thermal UV-C',
+    },
+    papers: [
+      {
+        kind: 'CASE STUDY',
+        title: 'Whole Milk: UV-C vs HTST, side by side',
+        body:
+          'Raw, HTST-treated (72 °C / 15 s) and UV-C-treated whole milk compared by bottom-up proteomics at 13.3, 23.3 and 38.7 mJ/cm². HTST came out 49% further from raw milk than UV-C did, and cell viability stayed above 85% at every dose tested.',
+      },
+      {
+        kind: 'APPLICATION REPORT',
+        title: 'Cheese brine, treated cold',
+        body:
+          'Brine at 18–25% NaCl is about as hostile as liquid food gets — near-zero UV transmission and heavy soil load. At 60 / 80 / 100% lamp intensity FloUV delivered ~2.0 to ~2.8 log on standard plate count, with coliforms dropping from >300 MPN to <1 at every setting.',
+      },
+    ],
     ctaLabel: 'Request Report',
   },
   {
     id: 'juices',
     label: 'Juices',
     accent: 'var(--flouv-blue-soft)',
-    heroImage: 'https://images.squarespace-cdn.com/content/v1/667dcb8b5500c04d659a87e1/6c0518f5-f37a-4a6c-a941-bec1bc2adadc/Machine+image+1.png',
-    gallery: [
-      'https://images.squarespace-cdn.com/content/v1/667dcb8b5500c04d659a87e1/1769408419751-VHVYS3845GJYOWXYHCC2/unsplash-image-EtjrEsUzChU.jpg',
-      'https://images.squarespace-cdn.com/content/v1/667dcb8b5500c04d659a87e1/1769409272655-Q6WZTF4E5CAVL9IF9BDU/unsplash-image-boRUigPjYDE.jpg',
-    ],
+    heroImage: tabJuices,
+    gallery: [],
     title: 'Beyond thermal. Beyond HPP. A smarter way to pasteurize juices.',
     intro:
       'Thermal processing sacrifices quality. HPP adds cost and batch limits. FloUV offers a continuous, non-thermal alternative — validated microbial safety with fresh-like taste, clean labels, and up to 90% lower energy use.',
@@ -100,17 +129,22 @@ const INDUSTRIES = [
       ],
       label: 'Ask about juices',
     },
+    papers: [
+      {
+        kind: 'TECHNOLOGY REPORT',
+        title: 'UV-C for cold-pressed juice',
+        body:
+          'Juice stops UV-C within a fraction of a millimetre — 12.31 cm⁻¹ absorbance, effectively zero transmission at 1 cm. This report covers how a validated 21 CFR 120 5-log step is still delivered without heat, what it does to polyphenols and vitamin C, and the energy gap against HTST: roughly 0.4 versus 2.2–3.8 kWh·m⁻³ per log.',
+      },
+    ],
     ctaLabel: 'Request Case Study',
   },
   {
     id: 'beverages',
     label: 'Beverages',
     accent: 'var(--flouv-blue-soft)',
-    heroImage: 'https://images.squarespace-cdn.com/content/v1/667dcb8b5500c04d659a87e1/1769414870292-16ZM77XXRWU8WRZLGHHX/unsplash-image-LZL7WaOGUX0.jpg',
-    gallery: [
-      'https://images.squarespace-cdn.com/content/v1/667dcb8b5500c04d659a87e1/1769417784712-S2NIFP7MI7RFIA1KJUIA/unsplash-image-xD5SWy7hMbw.jpg',
-      'https://images.squarespace-cdn.com/content/v1/667dcb8b5500c04d659a87e1/1769418354652-EJGWXGYDIJS1XP07BH0P/unsplash-image-Sl-ZCXyUZho.jpg',
-    ],
+    heroImage: tabBeverages,
+    gallery: [],
     title: 'Non-thermal preservation for the next generation of beverages',
     intro:
       'FloUV supports next-generation beverage processing — from plant-based milks and coconut water to energy drinks, sugar syrups and flavour extracts — delivering non-thermal, continuous microbial reduction that preserves nutrients, flavor, and functional performance without heat.',
@@ -153,12 +187,21 @@ const INDUSTRIES = [
       ],
       label: 'Ask about beverages',
     },
+    papers: [
+      {
+        kind: 'TECHNICAL REPORT',
+        title: 'Glucose syrup: CFD and delivered dose',
+        body:
+          'At roughly 87% UV transmittance per cm, syrup is the opposite problem to milk — light travels, viscosity is the constraint. CFD puts delivered RED at 54 mJ/cm² after 4.11 m and 624 mJ/cm² across the full 55 m, which is enough headroom to shorten the reactor toward a 60–80 mJ/cm² target.',
+      },
+    ],
     ctaLabel: 'Talk to a FloUV Expert',
   },
   {
     id: 'brewing',
     label: 'Brewing',
     accent: 'var(--flouv-blue-soft)',
+    heroImage: tabBrewing,
     gallery: [],
     title: 'Shelf life, without losing the beer',
     intro:
@@ -197,12 +240,22 @@ const INDUSTRIES = [
       ],
       label: 'Ask about brewing',
     },
+    papers: [
+      {
+        kind: 'ENGINEERING WHITE PAPER',
+        title: 'From heat to light',
+        body:
+          'Written for engineers who already trust an F-value. Thermal and UV-C inactivation are the same first-order problem with a different exposure variable — this paper maps one validation framework onto the other, then explains why uniform dose delivery, not lamp power, is the thing worth engineering.',
+      },
+    ],
     ctaLabel: 'Request Brochure',
   },
   {
     id: 'biofermentation',
     label: 'Biofermentation',
     accent: 'var(--flouv-blue-soft)',
+    heroImage: tabBiofermentation,
+    gallery: [],
     title: 'Debottlenecking fermentation feed sterilization — without a new boiler',
     intro:
       'Thermal (HTST) sterilization of fermentation feed gates every batch and locks in heavy utility capex. FloUV treats the sugar/dextrose feed cold — continuous, non-thermal UV-C with biodosimetry-validated dose delivery, engineered for the opaque, viscous streams conventional UV was never built for.',
@@ -240,13 +293,21 @@ const INDUSTRIES = [
       ],
       label: 'Ask about fermentation',
     },
+    papers: [
+      {
+        kind: 'ENGINEERING WHITE PAPER',
+        title: 'From heat to light',
+        body:
+          'The engineering case for treating a sterilization duty photochemically rather than thermally: matched inactivation kinetics, the optical attenuation problem, and how engineered secondary flow turns a non-uniform fluence field into a dose you can validate.',
+      },
+    ],
     ctaLabel: 'Talk to a FloUV Expert',
   },
   {
     id: 'water',
     label: 'Water & AOP',
     accent: 'var(--flouv-blue-soft)',
-    heroImage: '/dynamic_images/water.png',
+    heroImage: tabWater,
     gallery: [],
     title: 'Advanced oxidation you can prove',
     intro:
@@ -285,6 +346,14 @@ const INDUSTRIES = [
       ],
       label: 'Ask about water & AOP',
     },
+    papers: [
+      {
+        kind: 'ENGINEERING WHITE PAPER',
+        title: 'From heat to light',
+        body:
+          'Conventional UV was built for water, where photons reach the whole volume. This paper starts there and works outward — what changes once absorption and scattering collapse penetration to the boundary, and what that means for dose verification.',
+      },
+    ],
     ctaLabel: 'Talk to a FloUV Expert',
   },
 ];
@@ -356,6 +425,8 @@ export default function Industries() {
     INDUSTRIES.some((i) => i.id === tabParam) ? tabParam : INDUSTRIES[0].id
   );
   const active = INDUSTRIES.find((i) => i.id === activeId);
+  const [requestPaper, setRequestPaper] = useState(null);
+  const [meetingOpen, setMeetingOpen] = useState(false);
 
   useEffect(() => {
     const tab = searchParams.get('tab');
@@ -377,7 +448,7 @@ export default function Industries() {
         <section
           style={{
             background: 'linear-gradient(180deg, var(--flouv-bg-soft) 0%, var(--flouv-border-soft) 100%)',
-            padding: '90px 56px 60px',
+            padding: '68px 56px 44px',
           }}
         >
           <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center' }}>
@@ -433,38 +504,29 @@ export default function Industries() {
         </section>
 
         {/* ACTIVE INDUSTRY PANEL */}
-        <section style={{ padding: '80px 56px 110px' }}>
+        <section style={{ padding: '60px 56px 76px' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.1fr', gap: 48, alignItems: 'center', marginBottom: 56 }}>
               {active.heroImage ? (
                 <div
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1.4fr 1fr',
-                    gridTemplateRows: active.gallery.length > 1 ? '1fr 1fr' : '1fr',
-                    gap: 8,
                     height: 320,
+                    borderRadius: 16,
+                    overflow: 'hidden',
+                    background: 'var(--flouv-blue-tint)',
+                    position: 'relative',
                   }}
                 >
                   <img
                     src={active.heroImage}
                     alt={`${active.label} processing`}
                     style={{
-                      gridRow: active.gallery.length > 1 ? '1 / 3' : 'auto',
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
-                      borderRadius: 16,
+                      display: 'block',
                     }}
                   />
-                  {active.gallery.map((src, i) => (
-                    <img
-                      key={src}
-                      src={src}
-                      alt={`${active.label} ${i + 1}`}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 16 }}
-                    />
-                  ))}
                 </div>
               ) : (
                 <div
@@ -561,6 +623,58 @@ export default function Industries() {
               ))}
             </div>
 
+            {active.papers && (
+              <div style={{ marginTop: 20, padding: '34px 34px 30px', background: 'var(--flouv-white)', border: '1px solid oklch(0.90 0.02 258)', borderRadius: 14 }}>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.09em', color: 'var(--flouv-blue)', opacity: 0.75, marginBottom: 6 }}>
+                  GO DEEPER
+                </div>
+                <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 19, fontWeight: 600, margin: '0 0 22px' }}>
+                  The evidence behind this application
+                </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(active.papers.length, 3)}, 1fr)`, gap: 18 }}>
+                  {active.papers.map((paper) => (
+                    <div
+                      key={paper.title + paper.kind}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        padding: '24px 24px 22px',
+                        background: 'oklch(0.968 0.014 258)',
+                        border: '1px solid oklch(0.90 0.025 258)',
+                        borderRadius: 12,
+                      }}
+                    >
+                      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 10.5, fontWeight: 700, letterSpacing: '0.09em', color: 'var(--flouv-blue-soft)', marginBottom: 10 }}>
+                        {paper.kind}
+                      </div>
+                      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 16.5, fontWeight: 600, lineHeight: 1.3, color: 'var(--flouv-blue-deep)', marginBottom: 10 }}>
+                        {paper.title}
+                      </div>
+                      <p style={{ fontSize: 13.5, lineHeight: 1.6, color: 'var(--flouv-text)', margin: '0 0 20px' }}>{paper.body}</p>
+                      <button
+                        onClick={() => setRequestPaper(paper)}
+                        style={{
+                          marginTop: 'auto',
+                          alignSelf: 'flex-start',
+                          background: 'var(--flouv-green)',
+                          color: 'var(--flouv-green-ink)',
+                          border: 'none',
+                          padding: '11px 20px',
+                          borderRadius: 100,
+                          fontSize: 13.5,
+                          fontWeight: 700,
+                          fontFamily: "'Inter', sans-serif",
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Request this report →
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {active.faq && (
               <div
                 style={{
@@ -638,6 +752,118 @@ export default function Industries() {
                 </div>
               </div>
             )}
+
+            {active.expert && (
+              <div
+                style={{
+                  marginTop: 24,
+                  padding: '40px 44px',
+                  background: 'var(--flouv-white)',
+                  border: '1px solid var(--flouv-border)',
+                  borderTop: `3px solid ${active.accent}`,
+                  display: 'grid',
+                  gridTemplateColumns: '200px 1fr',
+                  gap: 40,
+                  alignItems: 'start',
+                }}
+              >
+                <div
+                  style={{
+                    width: 200,
+                    height: 200,
+                    borderRadius: 12,
+                    background: 'var(--flouv-blue-tint)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: 56,
+                    fontWeight: 700,
+                    color: active.accent,
+                  }}
+                >
+                  {active.expert.initials}
+                </div>
+
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', color: active.accent, marginBottom: 12 }}>
+                    {active.expert.eyebrow}
+                  </div>
+                  <h3
+                    style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: 26,
+                      fontWeight: 700,
+                      letterSpacing: '-0.01em',
+                      margin: '0 0 6px',
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {active.expert.name}
+                  </h3>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--flouv-text)', marginBottom: 20, lineHeight: 1.5 }}>
+                    {active.expert.title}
+                  </div>
+
+                  {active.expert.bio.map((para) => (
+                    <p key={para.slice(0, 32)} style={{ fontSize: 15.5, lineHeight: 1.7, color: 'var(--flouv-text)', margin: '0 0 16px' }}>
+                      {para}
+                    </p>
+                  ))}
+
+                  <p
+                    style={{
+                      fontSize: 15.5,
+                      lineHeight: 1.6,
+                      fontWeight: 600,
+                      color: 'var(--flouv-ink)',
+                      background: 'var(--flouv-bg-soft)',
+                      borderLeft: `3px solid ${active.accent}`,
+                      padding: '14px 18px',
+                      margin: '0 0 22px',
+                    }}
+                  >
+                    {active.expert.role}
+                  </p>
+
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
+                    {active.expert.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 700,
+                          letterSpacing: '0.06em',
+                          color: 'var(--flouv-blue)',
+                          background: 'var(--flouv-blue-tint)',
+                          border: '1px solid var(--flouv-border)',
+                          borderRadius: 100,
+                          padding: '7px 14px',
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <a
+                    href={`mailto:${active.expert.email}?subject=${encodeURIComponent(active.expert.ctaSubject)}`}
+                    style={{
+                      background: 'var(--flouv-green)',
+                      color: 'var(--flouv-green-ink)',
+                      padding: '14px 28px',
+                      borderRadius: 100,
+                      textDecoration: 'none',
+                      fontSize: 14,
+                      fontWeight: 700,
+                      display: 'inline-block',
+                    }}
+                  >
+                    {active.expert.ctaLabel} →
+                  </a>
+                </div>
+              </div>
+            )}
           </div>
         </section>
 
@@ -645,7 +871,7 @@ export default function Industries() {
         <section
           style={{
             background: 'linear-gradient(135deg, var(--flouv-blue), var(--flouv-blue-deep))',
-            padding: '120px 56px',
+            padding: '84px 56px',
             textAlign: 'center',
           }}
         >
@@ -666,21 +892,22 @@ export default function Industries() {
             team about your specific product and volumes.
           </p>
           <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link
-              to="/about"
+            <button
+              onClick={() => setMeetingOpen(true)}
               style={{
                 background: 'var(--flouv-green)',
                 color: 'var(--flouv-green-ink)',
+                border: 'none',
                 padding: '17px 34px',
                 borderRadius: 3,
-                textDecoration: 'none',
                 fontSize: 15,
                 fontWeight: 700,
-                display: 'inline-block',
+                fontFamily: "'Inter', sans-serif",
+                cursor: 'pointer',
               }}
             >
               Book a Meeting
-            </Link>
+            </button>
             <Link
               to="/technology"
               style={{
@@ -700,6 +927,10 @@ export default function Industries() {
           </div>
         </section>
       </div>
+      {requestPaper && (
+        <InquiryModal mode="report" title={requestPaper.title} kind={requestPaper.kind} context={active.label} onClose={() => setRequestPaper(null)} />
+      )}
+      {meetingOpen && <InquiryModal mode="meeting" context={active.label} onClose={() => setMeetingOpen(false)} />}
     </Layout>
   );
 }

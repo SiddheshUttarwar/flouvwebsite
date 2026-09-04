@@ -1,21 +1,24 @@
 import { useState, useEffect } from 'react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import Layout from '../components/Layout.jsx';
 import Login from './Login.jsx';
+import BlogsTab from './admin/BlogsTab.jsx';
+import InquiriesTab from './admin/InquiriesTab.jsx';
+import AnalyticsTab from './admin/AnalyticsTab.jsx';
+import KnowledgeBaseTab from './admin/KnowledgeBaseTab.jsx';
+import HealthTab from './admin/HealthTab.jsx';
 
-const API_URL = '/api/blogs';
-const UPLOAD_URL = '/api/upload';
+const TABS = [
+  { key: 'blogs', label: 'Blogs', component: BlogsTab },
+  { key: 'inquiries', label: 'Inquiries', component: InquiriesTab },
+  { key: 'analytics', label: 'Analytics', component: AnalyticsTab },
+  { key: 'knowledge-base', label: 'Knowledge Base', component: KnowledgeBaseTab },
+  { key: 'health', label: 'System Health', component: HealthTab },
+];
 
 export default function Admin() {
-  const [blogs, setBlogs] = useState([]);
-  const [formData, setFormData] = useState({ title: '', date: '', category: '', image: '', content: '', points: '', categories: '' });
-  const [imageFile, setImageFile] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [editingId, setEditingId] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [activeTab, setActiveTab] = useState(TABS[0].key);
 
   useEffect(() => {
     checkAuth();
@@ -24,155 +27,20 @@ export default function Admin() {
   const checkAuth = async () => {
     try {
       const res = await fetch('/api/check-auth', { credentials: 'include' });
-      if (res.ok) {
-        setIsAuthenticated(true);
-        fetchBlogs();
-      } else {
-        setIsAuthenticated(false);
-      }
+      setIsAuthenticated(res.ok);
     } catch (e) {
       setIsAuthenticated(false);
     }
     setIsCheckingAuth(false);
   };
 
-  const fetchBlogs = async () => {
+  const handleLogout = async () => {
     try {
-      const res = await fetch(API_URL, { credentials: 'include' });
-      const data = await res.json();
-      setBlogs(Array.isArray(data) ? data : []);
+      await fetch('/api/logout', { method: 'POST', credentials: 'include' });
     } catch (err) {
-      console.error('Failed to fetch blogs', err);
+      console.error('Failed to logout', err);
     }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleQuillChange = (content) => {
-    setFormData(prev => ({ ...prev, content }));
-  };
-
-  const handleFileChange = (e) => {
-    setImageFile(e.target.files[0]);
-  };
-
-  const handleEdit = (blog) => {
-    setFormData(blog);
-    setEditingId(blog.id);
-    setImageFile(null); // Keep existing image unless they select a new one
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const cancelEdit = () => {
-    setFormData({ title: '', date: '', category: '', image: '', content: '', points: '', categories: '' });
-    setEditingId(null);
-    setImageFile(null);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!imageFile && !formData.image) {
-        alert("Please select an image to upload.");
-        return;
-    }
-    setLoading(true);
-    
-    let imageUrl = formData.image;
-    
-    // 1. Upload the image first if a new one was selected
-    if (imageFile) {
-        const uploadData = new FormData();
-        uploadData.append('file', imageFile);
-        
-        try {
-            const uploadRes = await fetch(UPLOAD_URL, {
-                method: 'POST',
-                credentials: 'include',
-                body: uploadData
-            });
-            if (uploadRes.ok) {
-                const uploadJson = await uploadRes.json();
-                imageUrl = uploadJson.url; 
-            } else {
-                const errText = await uploadRes.text();
-                alert(`Image upload failed: ${errText}`);
-                setLoading(false);
-                return;
-            }
-        } catch (err) {
-            console.error('Failed to upload image', err);
-            alert(`Failed to connect to backend for image upload: ${err.message}`);
-            setLoading(false);
-            return;
-        }
-    }
-
-    // 2. Submit or Update the blog post
-    try {
-      const payload = { ...formData, image: imageUrl };
-      const method = editingId ? 'PUT' : 'POST';
-      const endpoint = editingId ? `${API_URL}/${editingId}` : API_URL;
-
-      const res = await fetch(endpoint, {
-        method: method,
-        headers: { 
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify(payload),
-      });
-      if (res.ok) {
-        setFormData({ title: '', date: '', category: '', image: '', content: '', points: '', categories: '' });
-        setImageFile(null);
-        setEditingId(null);
-        e.target.reset(); // clears the file input visually
-        fetchBlogs();
-        alert(editingId ? "Blog updated successfully!" : "Blog published successfully!");
-      } else {
-        const errText = await res.text();
-        alert(`Failed to save blog to database: ${errText}`);
-      }
-    } catch (err) {
-      console.error('Failed to save blog', err);
-      alert(`Failed to connect to backend to save blog: ${err.message}`);
-    }
-    setLoading(false);
-  };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this post?")) return;
-    try {
-      const res = await fetch(`${API_URL}/${id}`, { 
-        method: 'DELETE',
-        credentials: 'include'
-      });
-      if (res.ok) fetchBlogs();
-    } catch (err) {
-      console.error('Failed to delete blog', err);
-    }
-  };
-
-  const handleSyncDrive = async () => {
-    setIsSyncing(true);
-    try {
-      const res = await fetch('/api/ingest-gdrive', { 
-        method: 'POST',
-        credentials: 'include'
-      });
-      const data = await res.json();
-      if (res.ok) {
-        alert(`Success! ${data.message}`);
-      } else {
-        alert(`Failed to sync: ${data.detail || JSON.stringify(data)}`);
-      }
-    } catch (err) {
-      console.error('Failed to sync drive', err);
-      alert(`Network error during sync: ${err.message}`);
-    }
-    setIsSyncing(false);
+    setIsAuthenticated(false);
   };
 
   if (isCheckingAuth) {
@@ -182,210 +50,51 @@ export default function Admin() {
   if (!isAuthenticated) {
     return (
       <Layout active="Admin">
-        <Login onSuccess={() => {
-          setIsAuthenticated(true);
-          fetchBlogs();
-        }} />
+        <Login onSuccess={() => setIsAuthenticated(true)} />
       </Layout>
     );
   }
 
+  const ActiveComponent = TABS.find(t => t.key === activeTab)?.component ?? BlogsTab;
+
   return (
     <Layout active="Admin">
-      <main style={{ padding: '60px 56px', background: 'var(--flouv-bg-soft)', minHeight: '80vh' }}>
-        <div style={{ maxWidth: 1000, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: 60 }}>
-          
-          {/* Create/Edit Blog Form */}
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, fontWeight: 700, margin: 0, color: 'var(--flouv-blue)' }}>
-                {editingId ? 'Edit Blog' : 'Create New Blog'}
-                </h2>
-                {editingId && (
-                    <button onClick={cancelEdit} style={{ background: 'none', border: 'none', color: 'var(--flouv-muted)', cursor: 'pointer', textDecoration: 'underline' }}>
-                        Cancel Edit
-                    </button>
-                )}
-            </div>
-            
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <input
-                name="title"
-                placeholder="Blog Title"
-                value={formData.title}
-                onChange={handleChange}
-                required
-                style={{ padding: 12, borderRadius: 6, border: '1px solid var(--flouv-border)', fontFamily: "'Inter', sans-serif", fontSize: 15 }}
-              />
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                <input
-                    name="date"
-                    placeholder="Date (e.g. 5/28/19)"
-                    value={formData.date}
-                    onChange={handleChange}
-                    required
-                    style={{ padding: 12, borderRadius: 6, border: '1px solid var(--flouv-border)', fontFamily: "'Inter', sans-serif", fontSize: 15 }}
-                />
-                <input
-                    name="category"
-                    placeholder="Category (e.g. Technology)"
-                    value={formData.category}
-                    onChange={handleChange}
-                    required
-                    style={{ padding: 12, borderRadius: 6, border: '1px solid var(--flouv-border)', fontFamily: "'Inter', sans-serif", fontSize: 15 }}
-                />
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                <input
-                    name="points"
-                    placeholder='Points (JSON array)'
-                    value={formData.points || ''}
-                    onChange={handleChange}
-                    style={{ padding: 12, borderRadius: 6, border: '1px solid var(--flouv-border)', fontFamily: "'Inter', sans-serif", fontSize: 15 }}
-                />
-                <input
-                    name="categories"
-                    placeholder='Categories (JSON array)'
-                    value={formData.categories || ''}
-                    onChange={handleChange}
-                    style={{ padding: 12, borderRadius: 6, border: '1px solid var(--flouv-border)', fontFamily: "'Inter', sans-serif", fontSize: 15 }}
-                />
-              </div>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <label style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: 'var(--flouv-muted)', fontWeight: 600 }}>
-                  {editingId ? 'Update Cover Image (optional)' : 'Upload Cover Image'}
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  required={!editingId && !formData.image}
-                  style={{ padding: 10, borderRadius: 6, border: '1px solid var(--flouv-border)', fontFamily: "'Inter', sans-serif", fontSize: 14, background: 'var(--flouv-white)' }}
-                />
-                {editingId && formData.image && !imageFile && (
-                    <span style={{ fontSize: 12, color: 'var(--flouv-muted)' }}>Currently using: {formData.image.split('/').pop()}</span>
-                )}
-              </div>
+      <main style={{ padding: '40px 56px 64px', background: 'var(--flouv-bg-soft)', minHeight: '80vh' }}>
+        <div style={{ maxWidth: 1160, margin: '0 auto' }}>
 
-              {/* Rich Text Editor */}
-              <div style={{ background: 'var(--flouv-white)', borderRadius: 6, border: '1px solid var(--flouv-border)', overflow: 'hidden' }}>
-                <ReactQuill 
-                    theme="snow" 
-                    value={formData.content} 
-                    onChange={handleQuillChange} 
-                    style={{ height: '300px' }}
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                style={{
-                  padding: '14px 24px',
-                  background: 'var(--flouv-green)',
-                  color: 'var(--flouv-green-ink)',
-                  border: 'none',
-                  borderRadius: 6,
-                  fontSize: 16,
-                  fontWeight: 600,
-                  cursor: loading ? 'wait' : 'pointer',
-                  fontFamily: "'Inter', sans-serif",
-                  marginTop: 40
-                }}
-              >
-                {loading ? 'Saving...' : (editingId ? 'Update Blog' : 'Publish Blog')}
-              </button>
-            </form>
-          </div>
-
-          {/* Right Column: KB Sync and Manage Blogs List */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
-            
-            {/* Knowledge Base Sync Section */}
-            <div>
-              <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, fontWeight: 700, margin: '0 0 16px', color: 'var(--flouv-blue)' }}>
-                Knowledge Base
-              </h2>
-              <div style={{ padding: 24, background: 'var(--flouv-white)', borderRadius: 8, boxShadow: '0 4px 12px oklch(0.3 0.08 264 / 0.05)', border: '1px solid var(--flouv-border)' }}>
-                <p style={{ color: 'var(--flouv-text)', marginTop: 0, marginBottom: 20, fontSize: 14, lineHeight: 1.5 }}>
-                  Click below to fetch the latest documents from your connected Google Drive folder. This will automatically rebuild the AI's vectors so it instantly learns new information.
-                </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
+            <nav style={{ display: 'flex', gap: 4, background: 'var(--flouv-white)', padding: 4, borderRadius: 10, border: '1px solid var(--flouv-border)' }}>
+              {TABS.map((tab) => (
                 <button
-                  onClick={handleSyncDrive}
-                  disabled={isSyncing}
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
                   style={{
-                    padding: '12px 20px',
-                    background: 'var(--flouv-blue)', // brand blue
-                    color: 'var(--flouv-white)',
+                    padding: '9px 18px',
+                    borderRadius: 7,
                     border: 'none',
-                    borderRadius: 6,
-                    fontSize: 14,
+                    fontSize: 13.5,
                     fontWeight: 600,
-                    cursor: isSyncing ? 'wait' : 'pointer',
-                    width: '100%',
                     fontFamily: "'Inter', sans-serif",
-                    opacity: isSyncing ? 0.7 : 1
+                    cursor: 'pointer',
+                    background: activeTab === tab.key ? 'var(--flouv-blue)' : 'transparent',
+                    color: activeTab === tab.key ? 'var(--flouv-white)' : 'var(--flouv-text)',
+                    transition: 'all 0.15s ease',
                   }}
                 >
-                  {isSyncing ? 'Syncing Google Drive (this may take a minute)...' : 'Sync Google Drive Now'}
+                  {tab.label}
                 </button>
-              </div>
-            </div>
+              ))}
+            </nav>
+            <button
+              onClick={handleLogout}
+              style={{ background: 'none', border: '1px solid var(--flouv-border)', color: 'var(--flouv-muted)', borderRadius: 6, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+            >
+              Log out
+            </button>
+          </div>
 
-            {/* Manage Blogs Section */}
-            <div>
-              <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, fontWeight: 700, margin: '0 0 24px', color: 'var(--flouv-blue)' }}>
-              Manage Blogs
-            </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {blogs.length === 0 ? (
-                <p style={{ color: 'var(--flouv-muted)' }}>No blogs found. Create one!</p>
-              ) : (
-                blogs.map((blog) => (
-                  <div key={blog.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 16, background: 'var(--flouv-white)', borderRadius: 8, boxShadow: '0 4px 12px oklch(0.3 0.08 264 / 0.05)', border: editingId === blog.id ? '2px solid var(--flouv-blue)' : '2px solid transparent' }}>
-                    <div>
-                      <div style={{ fontWeight: 600, color: 'var(--flouv-blue)', marginBottom: 4, fontFamily: "'Inter', sans-serif" }}>{blog.title}</div>
-                      <div style={{ fontSize: 12, color: 'var(--flouv-muted)', fontFamily: "'Inter', sans-serif" }}>{blog.date} &bull; {blog.category}</div>
-                    </div>
-                    <div style={{ display: 'flex', gap: 8 }}>
-                        <button
-                        onClick={() => handleEdit(blog)}
-                        style={{
-                            background: 'var(--flouv-border)',
-                            color: 'var(--flouv-blue)',
-                            border: 'none',
-                            borderRadius: 4,
-                            padding: '6px 12px',
-                            fontSize: 12,
-                            fontWeight: 600,
-                            cursor: 'pointer'
-                        }}
-                        >
-                        Edit
-                        </button>
-                        <button
-                        onClick={() => handleDelete(blog.id)}
-                        style={{
-                            background: 'var(--flouv-blue)',
-                            color: 'var(--flouv-white)',
-                            border: 'none',
-                            borderRadius: 4,
-                            padding: '6px 12px',
-                            fontSize: 12,
-                            fontWeight: 600,
-                            cursor: 'pointer'
-                        }}
-                        >
-                        Delete
-                        </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-          </div>
+          <ActiveComponent />
+
         </div>
       </main>
     </Layout>

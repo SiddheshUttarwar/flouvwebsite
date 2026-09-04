@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import Layout from '../components/Layout.jsx';
 import 'react-quill/dist/quill.snow.css'; // Add this to style the editor content
 
@@ -32,7 +33,7 @@ export default function BlogPost() {
   if (loading) {
     return (
       <Layout>
-        <main style={{ padding: '120px 56px', textAlign: 'center', background: 'var(--flouv-white)', minHeight: '80vh' }}>
+        <main style={{ padding: '84px 56px', textAlign: 'center', background: 'var(--flouv-white)', minHeight: '80vh' }}>
           Loading...
         </main>
       </Layout>
@@ -52,7 +53,7 @@ export default function BlogPost() {
   if (!blog) {
     return (
       <Layout>
-        <main style={{ padding: '120px 56px', textAlign: 'center', background: 'var(--flouv-white)', minHeight: '80vh' }}>
+        <main style={{ padding: '84px 56px', textAlign: 'center', background: 'var(--flouv-white)', minHeight: '80vh' }}>
           <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 40, color: 'var(--flouv-blue)' }}>Blog post not found.</h1>
           <Link to="/blog" style={{ color: 'var(--flouv-blue)', textDecoration: 'none', fontWeight: 600 }}>← Back to all posts</Link>
         </main>
@@ -100,10 +101,12 @@ export default function BlogPost() {
         )}
 
         <div style={{ maxWidth: 720, margin: '0 auto', padding: '0 24px' }}>
-          {/* We use dangerouslySetInnerHTML to render the HTML from React Quill */}
-          <div 
+          {/* We use dangerouslySetInnerHTML to render the HTML from React Quill.
+              Sanitized with DOMPurify so a compromised/rogue admin session can't
+              plant stored XSS that runs in every visitor's browser. */}
+          <div
             className="ql-editor"
-            dangerouslySetInnerHTML={{ __html: blog.content }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.content || '') }}
             style={{ 
               fontFamily: "'Inter', sans-serif", 
               fontSize: 18,

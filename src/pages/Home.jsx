@@ -1,13 +1,15 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout.jsx';
+import InquiryModal from '../components/InquiryModal.jsx';
 import ImagePlaceholder from '../components/ImagePlaceholder.jsx';
 import climateImpactImage from '../../uploads/Flouv climate impact .png';
 import thermalComparisonImage from '../../uploads/Thermal vs non thermal comparision .png';
 import lactoferrinImage from '../../uploads/Lactofferin Bioactive Image .png';
 import liquidsAliveImage from '../../uploads/When liquid stay alive .png';
 import differentiateImage from '../../uploads/Diffrentiate your product image .png';
-import heroImage from '../../uploads/Hero Image Home page .png';
-import howItWorksImage from '../../uploads/How it works image.png';
+import heroImage from '../../uploads/home-hero-banner.webp';
+import howItWorksImage from '../../uploads/reactor-inside.jpg';
 
 const SUSTAINABILITY_STATS = [
   { value: '~82%', label: 'Lower energy intensity (EEO) than HTST thermal pasteurization' },
@@ -40,7 +42,7 @@ const FLOUV_INSIGHTS = [
     title: 'When liquids stay alive',
     body: 'With FloUV non-thermal UV-C, liquids move as they should — native proteins remain intact, bioactives stay functional, and quality is preserved without heat, pressure, or disruption.',
     cta: 'Learn more',
-    to: '/technology',
+    to: '/industries?tab=juices',
     visual: 'Molecular preservation visual — UV-C dose vs. intact proteins',
     image: liquidsAliveImage,
   },
@@ -49,7 +51,7 @@ const FLOUV_INSIGHTS = [
     title: "Heat solves safety. It also solves away your product's value.",
     body: "Thermal pasteurization denatures heat-sensitive proteins and degrades flavor to hit safety targets. FloUV delivers the same regulatory safety outcome, cold — proteins stay native, flavor stays true.",
     cta: 'Learn more',
-    to: '/technology',
+    to: '/industries?tab=dairy',
     visual: 'Thermal vs. non-thermal comparison visual',
     image: thermalComparisonImage,
   },
@@ -58,7 +60,7 @@ const FLOUV_INSIGHTS = [
     title: 'Lactoferrin and IgA, kept functional',
     body: 'Lactoferrin and IgA are heat-sensitive milk bioactives significantly degraded during conventional thermal processing. FloUV preserves up to ~80% of native activity through non-thermal UV-C treatment.',
     cta: 'Request case study',
-    to: '/about',
+    report: { kind: 'CASE STUDY', title: 'Lactoferrin and IgA retention in UV-C treated milk' },
     visual: 'Lab / bioactive analysis visual',
     image: lactoferrinImage,
   },
@@ -140,6 +142,8 @@ const INDUSTRIES = [
 ];
 
 export default function Home() {
+  const [modal, setModal] = useState(null);
+
   return (
     <Layout active="Home">
       <div style={{ fontFamily: "'Inter', sans-serif", background: 'var(--flouv-white)', color: 'var(--flouv-ink)' }}>
@@ -148,8 +152,8 @@ export default function Home() {
           style={{
             position: 'relative',
             overflow: 'hidden',
-            height: 'clamp(560px, 92vh, 820px)',
-            minHeight: 560,
+            height: 'clamp(360px, 42vw, 640px)',
+            minHeight: 360,
             display: 'flex',
             alignItems: 'flex-end',
             justifyContent: 'center',
@@ -157,21 +161,21 @@ export default function Home() {
         >
           <img
             src={heroImage}
-            alt="FloUV UV-C reactor in operation"
+            alt="Dairy chiller, liquid processing line, and cold-pressed juice cooler"
             style={{
               position: 'absolute',
               inset: 0,
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              objectPosition: 'center 30%',
+              objectPosition: 'center center',
             }}
           />
           <div
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(180deg, oklch(0.2 0.1 264 / 0.15) 0%, oklch(0.2 0.1 264 / 0.1) 50%, oklch(0.2 0.1 264 / 0.55) 100%)',
+              background: 'linear-gradient(180deg, oklch(0.2 0.1 264 / 0.29) 0%, oklch(0.2 0.1 264 / 0.24) 45%, oklch(0.2 0.1 264 / 0.52) 100%)',
             }}
           />
           <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', padding: '0 24px 80px', maxWidth: 780 }}>
@@ -192,20 +196,22 @@ export default function Home() {
               FloUV brings precision UV-C processing to opaque liquids — protecting quality, nutrition, and value.
             </p>
             <div style={{ display: 'flex', gap: 14, justifyContent: 'center' }}>
-              <Link
-                to="/about"
+              <button
+                onClick={() => setModal({ mode: 'meeting' })}
                 style={{
                   background: 'var(--flouv-green)',
                   color: 'var(--flouv-green-ink)',
+                  border: 'none',
                   padding: '13px 28px',
                   borderRadius: 4,
-                  textDecoration: 'none',
                   fontSize: 14,
                   fontWeight: 500,
+                  fontFamily: "'Inter', sans-serif",
+                  cursor: 'pointer',
                 }}
               >
-                Book a demo
-              </Link>
+                Book a meeting
+              </button>
               <Link
                 to="/technology"
                 style={{
@@ -226,8 +232,8 @@ export default function Home() {
         </section>
 
         {/* ABOUT US TEASER */}
-        <section style={{ background: 'var(--flouv-bg-soft)', padding: '110px 56px' }}>
-          <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '76px 56px' }}>
+          <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'center' }}>
             <div>
               <Link
                 to="/about"
@@ -275,12 +281,27 @@ export default function Home() {
                 Find out more <span>→</span>
               </Link>
             </div>
-            <ImagePlaceholder label="FloUV team at work" spec="1200×900 · JPEG/WebP" aspectRatio="4 / 3" />
+            <video
+              src="/media/flouv-team.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              aria-label="The FloUV team at work"
+              style={{
+                width: '100%',
+                aspectRatio: '4 / 3',
+                objectFit: 'cover',
+                borderRadius: 16,
+                display: 'block',
+                background: 'var(--flouv-bg-soft)',
+              }}
+            />
           </div>
         </section>
 
         {/* INDUSTRIES TEASER */}
-        <section style={{ background: 'var(--flouv-white)', padding: '110px 56px 24px' }}>
+        <section style={{ background: 'var(--flouv-white)', padding: '76px 56px 20px' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 48 }}>
               <div>
@@ -330,7 +351,7 @@ export default function Home() {
         </section>
 
         {/* OVERVIEW LINK — GEA-style transitional link */}
-        <section style={{ background: 'var(--flouv-white)', padding: '0 56px 64px' }}>
+        <section style={{ background: 'var(--flouv-white)', padding: '0 56px 44px' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <Link
               to="/technology"
@@ -350,15 +371,15 @@ export default function Home() {
         </section>
 
         {/* SUSTAINABILITY — GEA-style climate impact block */}
-        <section style={{ background: 'var(--flouv-blue-deep)', padding: '110px 56px' }}>
+        <section style={{ background: 'var(--flouv-blue-deep)', padding: '76px 56px' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <div
               style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
-                gap: 64,
+                gap: 48,
                 alignItems: 'center',
-                marginBottom: 56,
+                marginBottom: 40,
               }}
             >
               <div>
@@ -397,21 +418,22 @@ export default function Home() {
                   Modeled at global dairy scale, replacing HTST with FloUV UV-C could avoid up to ~1.5 million
                   tonnes of CO₂ annually — equivalent to ~43 million trees planted per year.
                 </p>
-                <Link
-                  to="/about"
+                <button
+                  onClick={() => setModal({ mode: 'report', kind: 'CLIMATE IMPACT STUDY', title: 'FloUV Climate Impact Report' })}
                   style={{
                     background: 'var(--flouv-green)',
                     color: 'var(--flouv-green-ink)',
+                    border: 'none',
                     padding: '14px 28px',
                     borderRadius: 100,
-                    textDecoration: 'none',
                     fontSize: 14,
                     fontWeight: 700,
-                    display: 'inline-block',
+                    fontFamily: "'Inter', sans-serif",
+                    cursor: 'pointer',
                   }}
                 >
                   Request the Full Climate Impact Report
-                </Link>
+                </button>
               </div>
               <img
                 src={climateImpactImage}
@@ -450,14 +472,14 @@ export default function Home() {
         </section>
 
         {/* FLOUV INSIGHT — GEA-style insights card grid */}
-        <section style={{ background: 'var(--flouv-bg-soft)', padding: '110px 56px' }}>
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '76px 56px' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <h2
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: 38,
                 fontWeight: 700,
-                margin: '0 0 48px',
+                margin: '0 0 36px',
                 letterSpacing: '-0.01em',
                 color: 'var(--flouv-blue)',
               }}
@@ -509,17 +531,35 @@ export default function Home() {
                     <p style={{ fontSize: 14.5, lineHeight: 1.65, color: 'var(--flouv-text)', margin: '0 0 20px', flex: 1 }}>
                       {item.body}
                     </p>
-                    <Link
-                      to={item.to}
-                      style={{
-                        color: 'var(--flouv-blue)',
-                        textDecoration: 'none',
-                        fontSize: 14.5,
-                        fontWeight: 700,
-                      }}
-                    >
-                      {item.cta} →
-                    </Link>
+                    {item.report ? (
+                      <button
+                        onClick={() => setModal({ mode: 'report', ...item.report })}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          padding: 0,
+                          color: 'var(--flouv-blue)',
+                          fontSize: 14.5,
+                          fontWeight: 700,
+                          fontFamily: "'Inter', sans-serif",
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {item.cta} →
+                      </button>
+                    ) : (
+                      <Link
+                        to={item.to}
+                        style={{
+                          color: 'var(--flouv-blue)',
+                          textDecoration: 'none',
+                          fontSize: 14.5,
+                          fontWeight: 700,
+                        }}
+                      >
+                        {item.cta} →
+                      </Link>
+                    )}
                   </div>
                 </div>
               ))}
@@ -528,7 +568,8 @@ export default function Home() {
         </section>
 
         {/* HOW IT WORKS */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '110px 56px' }}>
+        <section style={{ background: 'oklch(0.968 0.016 218)', padding: '76px 56px' }}>
+          <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ marginBottom: 56 }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               HOW IT WORKS
@@ -538,7 +579,7 @@ export default function Home() {
             </h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'center', marginBottom: 72 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 44, alignItems: 'center', marginBottom: 72 }}>
             <div>
               <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--flouv-text)', margin: '0 0 16px' }}>
                 Harnessing the principles of light–matter interaction and advanced fluid dynamics, Dr. Ankit
@@ -557,8 +598,14 @@ export default function Home() {
             </div>
             <img
               src={howItWorksImage}
-              alt="FloUV UV-C reactor in the lab"
-              style={{ width: '100%', height: 480, objectFit: 'cover', borderRadius: 16, boxShadow: '0 30px 60px oklch(0.25 0.08 264 / 0.25)' }}
+              alt="Inside a FloUV reactor — serpentine FEP tubing coiled around lit UV-C lamps"
+              style={{
+                width: '100%',
+                height: 480,
+                objectFit: 'cover',
+                borderRadius: 16,
+                boxShadow: '0 26px 60px oklch(0.45 0.10 212 / 0.32)',
+              }}
             />
           </div>
 
@@ -567,15 +614,22 @@ export default function Home() {
               display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',
               gap: 4,
-              background: 'var(--flouv-border)',
+              background: 'oklch(0.86 0.045 214)',
               borderRadius: 12,
               overflow: 'hidden',
               marginBottom: 40,
             }}
           >
             {HOW_IT_WORKS.map((step) => (
-              <div key={step.tag} style={{ padding: '40px 36px', background: 'var(--flouv-white)' }}>
-                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 700, color: 'var(--flouv-muted-soft)', marginBottom: 20 }}>
+              <div
+                key={step.tag}
+                style={{
+                  padding: '36px 36px 40px',
+                  background: 'var(--flouv-white)',
+                  borderTop: '3px solid oklch(0.66 0.13 205)',
+                }}
+              >
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 700, color: 'oklch(0.48 0.10 208)', marginBottom: 20 }}>
                   {step.tag}
                 </div>
                 <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 21, fontWeight: 600, margin: '0 0 12px' }}>
@@ -601,10 +655,11 @@ export default function Home() {
           >
             Explore the technology
           </Link>
+          </div>
         </section>
 
         {/* SOLUTIONS FOR BRANDS & MANUFACTURERS */}
-        <section style={{ background: 'var(--flouv-bg-soft)', padding: '110px 56px' }}>
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '76px 56px' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               PARTNER WITH FLOUV
@@ -612,7 +667,7 @@ export default function Home() {
             <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 38, fontWeight: 700, margin: '0 0 20px', letterSpacing: '-0.01em' }}>
               Solutions for brands and manufacturers
             </h2>
-            <p style={{ fontSize: 16, lineHeight: 1.7, color: 'var(--flouv-text)', maxWidth: 720, margin: '0 0 48px' }}>
+            <p style={{ fontSize: 16, lineHeight: 1.7, color: 'var(--flouv-text)', maxWidth: 720, margin: '0 0 36px' }}>
               Whether you're a processor looking to innovate your product line with non-thermal solutions, or
               an OEM or distributor aiming to expand your portfolio with next-generation liquid processing
               technology, we offer FloUV platforms and partnerships tailored to your operational and business
@@ -640,7 +695,7 @@ export default function Home() {
             position: 'relative',
             overflow: 'hidden',
             background: 'linear-gradient(160deg, oklch(0.93 0.025 240), oklch(0.89 0.03 235))',
-            padding: '120px 56px',
+            padding: '84px 56px',
             textAlign: 'center',
           }}
         >
@@ -665,25 +720,29 @@ export default function Home() {
             <p style={{ fontSize: 15, color: 'oklch(0.5 0.02 245)', margin: '0 0 36px' }}>
               Get in touch — we're here to help. Book a meeting with us or reach out directly to our team.
             </p>
-            <Link
-              to="/about"
+            <button
+              onClick={() => setModal({ mode: 'meeting' })}
               style={{
                 background: 'var(--flouv-green)',
                 color: 'var(--flouv-green-ink)',
+                border: 'none',
                 padding: '17px 34px',
                 borderRadius: 3,
-                textDecoration: 'none',
                 fontSize: 15,
                 fontWeight: 700,
-                display: 'inline-block',
+                fontFamily: "'Inter', sans-serif",
+                cursor: 'pointer',
                 boxShadow: '0 8px 24px oklch(0.55 0.15 154 / 0.3)',
               }}
             >
               Book a meeting
-            </Link>
+            </button>
           </div>
         </section>
       </div>
+      {modal && (
+        <InquiryModal mode={modal.mode} title={modal.title} kind={modal.kind} onClose={() => setModal(null)} />
+      )}
     </Layout>
   );
 }
