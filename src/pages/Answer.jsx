@@ -2,26 +2,39 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import Layout from '../components/Layout.jsx';
+import { useChat } from '../context/ChatContext.jsx';
 
 export default function Answer() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [messages, setMessages] = useState([]);
+  // messages/sessionId live in ChatContext (in-memory, at the router root) —
+  // survives navigating away and back within the app, but a real browser
+  // refresh remounts the whole tree and starts a fresh session, by design.
+  const { messages, setMessages, sessionId, setSessionId } = useChat();
   const [inputValue, setInputValue] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [report, setReport] = useState(null);
   const [generatingReport, setGeneratingReport] = useState(false);
-  
+
   const messagesEndRef = useRef(null);
   const initialFetchDone = useRef(false);
+  // Snapshot taken once at mount, deliberately NOT the live `messages` state
+  // below — fetchAnswer adds messages asynchronously, and stripping `?q=`
+  // right after firing it (below) re-runs this effect while that fetch is
+  // still in flight. Checking the live (still-empty) `messages` at that
+  // moment would redirect the user home mid-answer; this snapshot can't
+  // change out from under that check.
+  const hadHistoryOnMount = useRef(messages.length > 0);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const q = params.get('q');
-    
+
     if (!q) {
-      navigate('/');
+      // No new question in the URL and nothing was restored from a prior
+      // visit — there's genuinely nothing to show here.
+      if (!hadHistoryOnMount.current && !initialFetchDone.current) navigate('/');
       return;
     }
 
@@ -29,6 +42,10 @@ export default function Answer() {
     if (!initialFetchDone.current) {
       initialFetchDone.current = true;
       fetchAnswer(q);
+      // Strip ?q= immediately after consuming it, so a later remount of this
+      // page (browser back/forward, or landing here with no new question)
+      // never re-fires the same question against the restored history.
+      navigate('/answer', { replace: true });
     }
   }, [location.search, navigate]);
 
@@ -39,11 +56,9 @@ export default function Answer() {
   const fetchAnswer = async (userQuery) => {
     setLoading(true);
     setError(null);
-    
+
     // Add user message to UI immediately
     setMessages(prev => [...prev, { role: 'user', content: userQuery }]);
-    
-    const sessionId = localStorage.getItem('rag_session_id');
 
     try {
       const res = await fetch('/api/chat', {
@@ -57,12 +72,12 @@ export default function Answer() {
       }
 
       const data = await res.json();
-      
+
       // Add assistant response
       setMessages(prev => [...prev, { role: 'assistant', content: data.answer }]);
-      
+
       if (data.session_id) {
-        localStorage.setItem('rag_session_id', data.session_id);
+        setSessionId(data.session_id);
       }
     } catch (err) {
       console.error(err);
@@ -80,7 +95,6 @@ export default function Answer() {
   };
 
   const generateReport = async () => {
-    const sessionId = localStorage.getItem('rag_session_id');
     const hasAssistantMessage = messages.some((m) => m.role === 'assistant');
 
     // Don't attempt a report before the first answer has resolved — the backend

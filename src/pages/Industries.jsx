@@ -2,13 +2,16 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout.jsx';
 import InquiryModal from '../components/InquiryModal.jsx';
+import ExpertCard from '../components/ExpertCard.jsx';
 import tabJuices from '../../uploads/tab-juices.webp';
 import tabBeverages from '../../uploads/tab-beverages.webp';
 import tabBrewing from '../../uploads/tab-brewing.webp';
 import tabBiofermentation from '../../uploads/tab-biofermentation.webp';
 import tabWater from '../../uploads/tab-water.webp';
+import dierkHeadshot from '../../uploads/dierk-dubiel.png';
+import nathanHeadshot from '../../uploads/nathan-riddell.png';
 
-const INDUSTRIES = [
+export const INDUSTRIES = [
   {
     id: 'dairy',
     label: 'Dairy',
@@ -58,11 +61,11 @@ const INDUSTRIES = [
     expert: {
       eyebrow: 'EU CONTACT FOR FLOUV',
       initials: 'DD',
+      photo: dierkHeadshot,
       name: 'Dirk Dubiel',
       title: 'Market Access Expert, Process Technology & Business Development, DACH',
       bio: [
-        'Dirk is an industry professional through and through: trained dairy technologist (Dipl. Ing. Dairy Food Technology), MBA, and former VP Business Line at GEA with responsibility for a 25 million euro P&L. He has led sales for Hydract in Denmark and driven business development at M&S Armaturen. He knows the dairy floor, the plant and the boardroom equally well, and he brings that credibility to every conversation.',
-        'As a native German speaker based in the DACH region, Dirk gives FloUV direct, unfiltered access to German, Austrian and Swiss decision makers.',
+        'Dirk opens the DACH dairy market for FloUV, giving German, Austrian and Swiss processors a direct line to the technology in their own language. A trained dairy technologist and MBA, formerly VP Business Line at GEA, he knows the plant floor and the boardroom equally well.',
       ],
       role: 'He is EU dairy technical marketing and point of contact for EU dairy inquiries.',
       tags: ['MARKET ACCESS', 'PROCESS TECHNOLOGY', 'GEA / MACHINERY'],
@@ -128,6 +131,20 @@ const INDUSTRIES = [
         'Does UV-C affect juice colour or vitamin C?',
       ],
       label: 'Ask about juices',
+    },
+    expert: {
+      placement: 'before-faq',
+      eyebrow: 'USA & CANADA · APPLE CIDER AND HARD CIDER',
+      initials: 'NR',
+      photo: nathanHeadshot,
+      name: 'Nathan Riddell',
+      title: 'General Manager, Juicing Systems — FloUV authorized distributor',
+      bio: [
+        'FloUV’s apple cider and hard cider business in the USA and Canada runs through Juicing Systems, our authorized distributor. Nathan leads it, pairing B2B equipment expertise with hands-on fruit-processing experience — so a cider maker gets the UV-C step and the line it sits in from one conversation, with install, service and financing already in place.',
+      ],
+      role: 'He is the point of contact for FloUV apple cider and hard cider inquiries across the USA and Canada.',
+      tags: ['B2B SALES', 'CIDER PRODUCTION', 'FRUIT PROCESSING EQUIPMENT', 'NORTH AMERICA'],
+      ctaLabel: 'Connect with Nathan',
     },
     papers: [
       {
@@ -448,7 +465,7 @@ export default function Industries() {
         <section
           style={{
             background: 'linear-gradient(180deg, var(--flouv-bg-soft) 0%, var(--flouv-border-soft) 100%)',
-            padding: '68px 56px 44px',
+            padding: '50px 56px 34px',
           }}
         >
           <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center' }}>
@@ -504,7 +521,7 @@ export default function Industries() {
         </section>
 
         {/* ACTIVE INDUSTRY PANEL */}
-        <section style={{ padding: '60px 56px 76px' }}>
+        <section style={{ padding: '44px 56px 54px' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.1fr', gap: 48, alignItems: 'center', marginBottom: 56 }}>
               {active.heroImage ? (
@@ -675,6 +692,10 @@ export default function Industries() {
               </div>
             )}
 
+            {active.expert && active.expert.placement === 'before-faq' && (
+              <ExpertCard expert={active.expert} accent={active.accent} onConnect={() => setMeetingOpen(true)} />
+            )}
+
             {active.faq && (
               <div
                 style={{
@@ -753,116 +774,8 @@ export default function Industries() {
               </div>
             )}
 
-            {active.expert && (
-              <div
-                style={{
-                  marginTop: 24,
-                  padding: '40px 44px',
-                  background: 'var(--flouv-white)',
-                  border: '1px solid var(--flouv-border)',
-                  borderTop: `3px solid ${active.accent}`,
-                  display: 'grid',
-                  gridTemplateColumns: '200px 1fr',
-                  gap: 40,
-                  alignItems: 'start',
-                }}
-              >
-                <div
-                  style={{
-                    width: 200,
-                    height: 200,
-                    borderRadius: 12,
-                    background: 'var(--flouv-blue-tint)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontFamily: "'Inter', sans-serif",
-                    fontSize: 56,
-                    fontWeight: 700,
-                    color: active.accent,
-                  }}
-                >
-                  {active.expert.initials}
-                </div>
-
-                <div>
-                  <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', color: active.accent, marginBottom: 12 }}>
-                    {active.expert.eyebrow}
-                  </div>
-                  <h3
-                    style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontSize: 26,
-                      fontWeight: 700,
-                      letterSpacing: '-0.01em',
-                      margin: '0 0 6px',
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    {active.expert.name}
-                  </h3>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--flouv-text)', marginBottom: 20, lineHeight: 1.5 }}>
-                    {active.expert.title}
-                  </div>
-
-                  {active.expert.bio.map((para) => (
-                    <p key={para.slice(0, 32)} style={{ fontSize: 15.5, lineHeight: 1.7, color: 'var(--flouv-text)', margin: '0 0 16px' }}>
-                      {para}
-                    </p>
-                  ))}
-
-                  <p
-                    style={{
-                      fontSize: 15.5,
-                      lineHeight: 1.6,
-                      fontWeight: 600,
-                      color: 'var(--flouv-ink)',
-                      background: 'var(--flouv-bg-soft)',
-                      borderLeft: `3px solid ${active.accent}`,
-                      padding: '14px 18px',
-                      margin: '0 0 22px',
-                    }}
-                  >
-                    {active.expert.role}
-                  </p>
-
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
-                    {active.expert.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        style={{
-                          fontSize: 11,
-                          fontWeight: 700,
-                          letterSpacing: '0.06em',
-                          color: 'var(--flouv-blue)',
-                          background: 'var(--flouv-blue-tint)',
-                          border: '1px solid var(--flouv-border)',
-                          borderRadius: 100,
-                          padding: '7px 14px',
-                        }}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  <a
-                    href={`mailto:${active.expert.email}?subject=${encodeURIComponent(active.expert.ctaSubject)}`}
-                    style={{
-                      background: 'var(--flouv-green)',
-                      color: 'var(--flouv-green-ink)',
-                      padding: '14px 28px',
-                      borderRadius: 100,
-                      textDecoration: 'none',
-                      fontSize: 14,
-                      fontWeight: 700,
-                      display: 'inline-block',
-                    }}
-                  >
-                    {active.expert.ctaLabel} →
-                  </a>
-                </div>
-              </div>
+            {active.expert && active.expert.placement !== 'before-faq' && (
+              <ExpertCard expert={active.expert} accent={active.accent} onConnect={() => setMeetingOpen(true)} />
             )}
           </div>
         </section>
@@ -871,7 +784,7 @@ export default function Industries() {
         <section
           style={{
             background: 'linear-gradient(135deg, var(--flouv-blue), var(--flouv-blue-deep))',
-            padding: '84px 56px',
+            padding: '60px 56px',
             textAlign: 'center',
           }}
         >

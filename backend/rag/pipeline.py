@@ -35,9 +35,18 @@ def handle_chat(query: str, session_id: str | None, db: Session) -> dict:
     memory.append_message(db, session_id, "user", query)
     history = memory.get_recent_history(db, session_id, limit=config.CHAT_HISTORY_LIMIT + 1)[:-1]
 
-    # Stage 2: hybrid retrieval
+    # Stage 2: hybrid retrieval. Embedding the query is a real external API
+    # call (Gemini) just like generation below — an outage/rate-limit/billing
+    # issue here shouldn't crash the whole request with a raw 500; fall
+    # through with no candidates and let the existing low-confidence fallback
+    # path (stage 7) produce the normal "I don't have enough information"
+    # response instead.
     with observability.stage_timer(trace, "retrieval"):
-        candidates = retrieval.hybrid_retrieve(query)
+        try:
+            candidates = retrieval.hybrid_retrieve(query)
+        except Exception as e:
+            print("Retrieval failed:", e)
+            candidates = []
     trace["retrieval_scores"] = [
         {"chunk_id": c.chunk.chunk_id, "rrf_score": round(c.rrf_score, 4)} for c in candidates
     ]

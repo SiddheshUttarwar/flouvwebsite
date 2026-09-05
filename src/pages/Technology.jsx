@@ -2,12 +2,29 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout.jsx';
 import InquiryModal from '../components/InquiryModal.jsx';
+import ExpertCard from '../components/ExpertCard.jsx';
 import techHeroBanner from '../../uploads/tech-hero-banner.webp';
 import reactor650 from '../../uploads/reactor-650.jpg';
 import reactor2000 from '../../uploads/reactor-2000.jpg';
 import reactor2500 from '../../uploads/reactor-2500.jpg';
+import module5000 from '../../uploads/flouv-5000-module.jpg';
+import prashantHeadshot from '../../uploads/prashant-tripathi.png';
 
-const STANDARD_RANGE = [
+const EU_DAIRY_CONTACT = {
+  eyebrow: 'EU CONTACT FOR FLOUV',
+  initials: 'PT',
+  photo: prashantHeadshot,
+  name: 'Prashant Tripathi',
+  title: 'Market Access Expert, Europe & India',
+  bio: [
+    'Prashant builds FloUV’s growth path across Europe and India. A process and food technology specialist with a market access and analysis background, he works the full dairy value chain — from farm economics to processing — so the case for a non-thermal step holds up for farmers, processors and distributors alike.',
+  ],
+  role: 'He is EU dairy technical marketing and point of contact for EU dairy inquiries.',
+  tags: ['MARKET ACCESS', 'PROCESS & FOOD TECHNOLOGY', 'DAIRY VALUE CHAIN'],
+  ctaLabel: 'Connect with Prashant',
+};
+
+export const STANDARD_RANGE = [
   {
     image: reactor650,
     cells: 'ONE CELL',
@@ -74,7 +91,7 @@ const PILLAR_ICONS = {
   ),
 };
 
-const PILLARS = [
+export const PILLARS = [
   {
     tag: 'BIOLOGY',
     icon: 'dna',
@@ -145,7 +162,7 @@ const STEP_ICONS = {
   ),
 };
 
-const HOW_IT_WORKS = [
+export const HOW_IT_WORKS = [
   {
     tag: 'STEP 1',
     icon: 'conduit',
@@ -166,7 +183,7 @@ const HOW_IT_WORKS = [
   },
 ];
 
-const VALUE_PROPS = [
+export const VALUE_PROPS = [
   {
     title: 'Superior microbial disinfection',
     body: 'Validated, non-thermal UV-C inactivation of vegetative cells, pathogens, yeast, molds, viruses, and heat-resistant spores, plus photochemical degradation of select mycotoxins — meeting FDA HACCP expectations with a 5–7 log pathogen reduction, without heat or chemicals.',
@@ -181,7 +198,7 @@ const VALUE_PROPS = [
   },
 ];
 
-const APPLICATIONS_CARDS = [
+export const APPLICATIONS_CARDS = [
   {
     id: 'dairy',
     title: 'Dairy',
@@ -214,7 +231,7 @@ const APPLICATIONS_CARDS = [
   },
 ];
 
-const VALIDATION_TOPICS = [
+export const VALIDATION_TOPICS = [
   {
     title: 'Scientific validation methodology',
     body: 'Every claim behind FloUV is backed by dose-response modeling, biodosimetry, and Reduction Equivalent Fluence (REF) analysis — the same rigor used to validate UV-C performance in opaque liquids, producing repeatable, auditable microbial-safety data rather than a single lab result.',
@@ -225,7 +242,7 @@ const VALIDATION_TOPICS = [
   },
 ];
 
-const SCALE_STEPS = [
+export const SCALE_STEPS = [
   {
     tier: 'THE UNICELL',
     flow: '~640 LPH',
@@ -246,7 +263,25 @@ const SCALE_STEPS = [
   },
 ];
 
-const SCALE_LEVERS = [
+export const MODULE_5000_SPECS = [
+  {
+    value: '~5,000 LPH',
+    label: 'MODULE THROUGHPUT',
+    body: 'Nominal capacity for the complete unit; rated flow follows the fluid’s optical density and viscosity.',
+  },
+  {
+    value: '8 unicells',
+    label: 'IN PARALLEL',
+    body: 'One feed divided across eight equivalent paths, each at its characterized velocity and dose.',
+  },
+  {
+    value: '× 7 modules',
+    label: 'SCALE-OUT',
+    body: 'Seven modules in parallel reach 35,000 LPH — nothing inside the reactor changes between pilot and plant.',
+  },
+];
+
+export const SCALE_LEVERS = [
   {
     label: 'PARALLEL',
     question: 'How much flow?',
@@ -359,7 +394,7 @@ export default function Technology() {
         <section
           style={{
             background: 'linear-gradient(180deg, var(--flouv-bg-soft) 0%, var(--flouv-border-soft) 100%)',
-            padding: '68px 56px 52px',
+            padding: '50px 56px 40px',
           }}
         >
           <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center' }}>
@@ -397,7 +432,7 @@ export default function Technology() {
         </section>
 
         {/* THREE PILLARS */}
-        <section style={{ background: 'var(--flouv-bg-soft)', padding: '76px 56px' }}>
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '54px 56px' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
             {PILLARS.map((pillar) => (
               <div
@@ -446,7 +481,7 @@ export default function Technology() {
         </section>
 
         {/* PROCESS OVERVIEW */}
-        <section style={{ background: 'linear-gradient(160deg, oklch(0.93 0.025 240), oklch(0.89 0.03 235))', padding: '76px 56px', color: 'oklch(0.22 0.03 250)' }}>
+        <section style={{ background: 'linear-gradient(160deg, oklch(0.93 0.025 240), oklch(0.89 0.03 235))', padding: '54px 56px', color: 'oklch(0.22 0.03 250)' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: 64 }}>
             <div>
               <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'oklch(0.45 0.04 240)', marginBottom: 12 }}>
@@ -483,7 +518,7 @@ export default function Technology() {
         </section>
 
         {/* TECHNICAL DEEP DIVE — COMPARISON */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '76px 56px' }}>
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '54px 56px' }}>
           <div style={{ textAlign: 'center', maxWidth: 820, margin: '0 auto 56px' }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               WHY CONVENTIONAL UV FALLS SHORT
@@ -524,7 +559,7 @@ export default function Technology() {
         </section>
 
         {/* HOW IT WORKS */}
-        <section style={{ background: 'var(--flouv-bg-soft)', padding: '68px 56px 76px' }}>
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '50px 56px 54px' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ marginBottom: 56 }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
@@ -574,7 +609,7 @@ export default function Technology() {
         <section
           style={{
             background: 'linear-gradient(135deg, var(--flouv-blue) 0%, var(--flouv-blue-deep) 100%)',
-            padding: '76px 56px',
+            padding: '54px 56px',
             color: 'oklch(0.98 0 0)',
           }}
         >
@@ -624,7 +659,7 @@ export default function Technology() {
         </section>
 
         {/* VALIDATION & METHODOLOGY */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '76px 56px' }}>
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '54px 56px' }}>
           <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
             SCIENTIFIC RIGOR
           </div>
@@ -710,7 +745,7 @@ export default function Technology() {
         </section>
 
         {/* STANDARD RANGE */}
-        <section style={{ background: 'var(--flouv-blue-deep)', padding: '76px 56px', color: 'oklch(0.98 0 0)' }}>
+        <section style={{ background: 'var(--flouv-blue-deep)', padding: '54px 56px', color: 'oklch(0.98 0 0)' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-green)', marginBottom: 12 }}>
               THE STANDARD RANGE
@@ -776,7 +811,7 @@ export default function Technology() {
         </section>
 
         {/* MODULAR SCALE-UP */}
-        <section style={{ background: 'var(--flouv-bg-soft)', padding: '76px 56px' }}>
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '54px 56px' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               MODULAR SCALE-UP
@@ -847,8 +882,88 @@ export default function Technology() {
           </div>
         </section>
 
+        {/* THE 5000 MODULE — render-led */}
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 56px' }}>
+          <div
+            style={{
+              background: 'var(--flouv-blue-deep)',
+              color: 'oklch(0.98 0 0)',
+              borderRadius: 16,
+              padding: '48px 48px 44px',
+            }}
+          >
+            <div style={{ fontSize: 12.5, fontWeight: 700, letterSpacing: '0.07em', color: 'oklch(0.75 0.03 260)', marginBottom: 12 }}>
+              FLOUV 5000 · THE COMMERCIAL MODULE
+            </div>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, fontWeight: 700, margin: '0 0 16px', letterSpacing: '-0.01em', lineHeight: 1.2 }}>
+              What eight validated cells look like on a floor
+            </h2>
+            <p style={{ fontSize: 16, lineHeight: 1.7, color: 'oklch(0.85 0.02 260)', maxWidth: 780, margin: '0 0 32px' }}>
+              Eight unicell reactors in one stainless cabinet, fed in parallel from a common manifold, with the
+              process skid — balance tank, feed pumps, valve train and instrumentation — delivered alongside it.
+              The module carries roughly 5,000 LPH, but no individual cell runs any harder than the one
+              characterized at pilot scale.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1.45fr 1fr', gap: 28, alignItems: 'start' }}>
+              <figure style={{ margin: 0 }}>
+                <div style={{ background: 'oklch(1 0 0)', borderRadius: 12, padding: 16 }}>
+                  <img
+                    src={module5000}
+                    alt="FloUV 5000 module — a stainless cabinet housing eight unicell reactors, with the process skid and balance tank alongside"
+                    style={{ width: '100%', height: 'auto', display: 'block' }}
+                  />
+                </div>
+                <figcaption style={{ fontSize: 12.5, color: 'oklch(0.72 0.03 260)', lineHeight: 1.55, marginTop: 10 }}>
+                  FloUV 5000 — reactor cabinet with the process skid alongside. The cells are accessible from the
+                  front of the cabinet; the skid carries the balance tank, pumps and valve train.
+                </figcaption>
+              </figure>
+
+              <div style={{ display: 'grid', gap: 14 }}>
+                {MODULE_5000_SPECS.map((spec) => (
+                  <div
+                    key={spec.label}
+                    style={{
+                      padding: '20px 22px',
+                      background: 'oklch(1 0 0 / 0.06)',
+                      border: '1px solid oklch(1 0 0 / 0.14)',
+                      borderLeft: '3px solid var(--flouv-green)',
+                      borderRadius: 10,
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: 25,
+                        fontWeight: 700,
+                        letterSpacing: '-0.02em',
+                        color: 'var(--flouv-green)',
+                        marginBottom: 4,
+                      }}
+                    >
+                      {spec.value}
+                    </div>
+                    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.07em', color: 'oklch(0.72 0.03 260)', marginBottom: 8 }}>
+                      {spec.label}
+                    </div>
+                    <p style={{ fontSize: 13.5, color: 'oklch(0.85 0.02 260)', lineHeight: 1.6, margin: 0 }}>{spec.body}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <p style={{ fontSize: 15.5, lineHeight: 1.7, color: 'oklch(0.85 0.02 260)', maxWidth: 900, margin: '32px 0 0' }}>
+              Higher capacity is reached by placing these modules in parallel, never by enlarging anything inside
+              one — seven of them is a 35,000 LPH plant. Velocity, residence time, Reynolds and Dean numbers and
+              the delivered-dose distribution inside each cell are identical at every tier, which is why the
+              dose–response work done on a single unicell still describes the installed system.
+            </p>
+          </div>
+        </section>
+
         {/* SUITABILITY CTA */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '76px 56px' }}>
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '54px 56px' }}>
           <div
             style={{
               background: 'var(--flouv-blue-deep)',
@@ -918,13 +1033,15 @@ export default function Technology() {
               </Link>
             </div>
           </div>
+
+          <ExpertCard expert={EU_DAIRY_CONTACT} onConnect={() => setMeetingOpen(true)} />
         </section>
 
         {/* CTA */}
         <section
           style={{
             background: 'linear-gradient(160deg, oklch(0.93 0.025 240), oklch(0.89 0.03 235))',
-            padding: '84px 56px',
+            padding: '60px 56px',
             textAlign: 'center',
           }}
         >

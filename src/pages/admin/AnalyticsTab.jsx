@@ -152,7 +152,7 @@ export default function AnalyticsTab() {
     try {
       const [statsRes, tracesRes] = await Promise.all([
         fetch(`/api/admin/stats?days=${windowDays}`, { credentials: 'include' }),
-        fetch('/api/admin/traces?limit=25', { credentials: 'include' }),
+        fetch('/api/admin/traces?limit=10', { credentials: 'include' }),
       ]);
       setStats(statsRes.ok ? await statsRes.json() : null);
       setTraces(tracesRes.ok ? await tracesRes.json() : []);
@@ -252,7 +252,7 @@ export default function AnalyticsTab() {
           </div>
 
           <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 700, margin: '0 0 12px', color: 'var(--flouv-blue)' }}>
-            Recent conversations
+            Recent conversations (last 10)
           </h3>
           <p style={{ color: 'var(--flouv-muted)', fontSize: 12.5, margin: '-8px 0 12px' }}>Click a row to see the full conversation.</p>
           <div style={{ background: 'var(--flouv-white)', borderRadius: 8, border: '1px solid var(--flouv-border)', overflow: 'hidden' }}>

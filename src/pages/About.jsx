@@ -6,6 +6,8 @@ import ceoPhoto from '../../uploads/pankajttarwar.webp';
 import ctoPhoto from '../../uploads/AnkitPatras2.webp';
 import elefqLogo from '../../uploads/ELEFQ_Logo.png';
 import elefqWordmark from '../../uploads/ELEFQ_Wordmark.png';
+import juicingSystemsLogo from '../../uploads/JuicingSystems_Logo.png';
+import whcLabLogo from '../../uploads/WHCLab_Logo.png';
 
 const PERFORMANCE_ICONS = {
   // Falling demand — bar heights step down, with the trend line calling it out
@@ -46,7 +48,7 @@ const PERFORMANCE_ICONS = {
   ),
 };
 
-const PERFORMANCE = [
+export const PERFORMANCE = [
   {
     title: 'Process efficiency',
     body: 'FloUV delivers precise, non-thermal UV-C treatment with low energy demand — reducing thermal load, preserving product value, and improving overall operational efficiency in complex liquid processing.',
@@ -59,7 +61,7 @@ const PERFORMANCE = [
   },
 ];
 
-const TEAM = [
+export const TEAM = [
   {
     initials: 'PU',
     photo: ceoPhoto,
@@ -84,7 +86,7 @@ const TEAM = [
   },
 ];
 
-const PARTNER_FORMS = [
+export const PARTNER_FORMS = [
   {
     label: 'INDEPENDENT CONSULTANTS',
     title: 'Specialists who bring FloUV into client projects',
@@ -103,7 +105,7 @@ const PARTNER_FORMS = [
   },
 ];
 
-const SCIENCE_PATH = [
+export const SCIENCE_PATH = [
   {
     step: '01',
     title: 'Optical characterization',
@@ -162,9 +164,9 @@ function PartnerLogoSlot({ name }) {
   );
 }
 
-// ELEFQ supplied two marks — the elephant logo and the ELEFQ wordmark. Both ship on a
-// white background, so they sit on a white tile rather than straight on the dark card.
-function ElefqLogos() {
+// Partner marks are dark artwork on white or transparent backgrounds, so they sit on a
+// white tile rather than straight on the dark case-study card.
+function LogoTile({ children }) {
   return (
     <div
       style={{
@@ -178,6 +180,14 @@ function ElefqLogos() {
         padding: '16px 14px',
       }}
     >
+      {children}
+    </div>
+  );
+}
+
+function ElefqLogos() {
+  return (
+    <LogoTile>
       <img
         src={elefqLogo}
         alt="ELEFQ Market Solutions logo"
@@ -188,7 +198,31 @@ function ElefqLogos() {
         alt="ELEFQ Market Solutions wordmark"
         style={{ height: 36, width: 'auto', maxWidth: '100%', objectFit: 'contain' }}
       />
-    </div>
+    </LogoTile>
+  );
+}
+
+function WhcLabLogo() {
+  return (
+    <LogoTile>
+      <img
+        src={whcLabLogo}
+        alt="WHC Lab logo"
+        style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+      />
+    </LogoTile>
+  );
+}
+
+function JuicingSystemsLogo() {
+  return (
+    <LogoTile>
+      <img
+        src={juicingSystemsLogo}
+        alt="Juicing Systems logo"
+        style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+      />
+    </LogoTile>
   );
 }
 
@@ -202,7 +236,7 @@ export default function About() {
         <section
           style={{
             background: 'linear-gradient(180deg, var(--flouv-bg-soft) 0%, var(--flouv-blue-tint) 100%)',
-            padding: '68px 56px 52px',
+            padding: '50px 56px 40px',
           }}
         >
           <div style={{ maxWidth: 820, margin: '0 auto', textAlign: 'center' }}>
@@ -272,7 +306,7 @@ export default function About() {
         </section>
 
         {/* TEAM */}
-        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '76px 56px' }}>
+        <section style={{ maxWidth: 1280, margin: '0 auto', padding: '54px 56px' }}>
           <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
             LEADERSHIP
           </div>
@@ -281,30 +315,30 @@ export default function About() {
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 32 }}>
             {TEAM.map((person) => (
-              <div key={person.name} style={{ padding: 40, background: 'var(--flouv-white)', border: '1px solid var(--flouv-border)', borderTop: `3px solid ${person.accent}` }}>
+              <div key={person.name} style={{ padding: 32, background: 'var(--flouv-white)', border: '1px solid var(--flouv-border)', borderTop: `3px solid ${person.accent}`, display: 'flex', gap: 24, alignItems: 'flex-start' }}>
                 {person.photo ? (
                   <img
                     src={person.photo}
                     alt={person.name}
                     style={{
-                      width: 200,
-                      height: 200,
+                      width: 150,
+                      height: 150,
                       borderRadius: 12,
                       objectFit: 'cover',
-                      marginBottom: 24,
+                      flexShrink: 0,
                     }}
                   />
                 ) : (
                   <div
                     style={{
-                      width: 200,
-                      height: 200,
+                      width: 150,
+                      height: 150,
                       borderRadius: 12,
                       background: person.glow,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      marginBottom: 24,
+                      flexShrink: 0,
                       fontFamily: "'Inter', sans-serif",
                       fontSize: 40,
                       fontWeight: 700,
@@ -314,11 +348,12 @@ export default function About() {
                     {person.initials}
                   </div>
                 )}
+                <div>
                 <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 21, fontWeight: 600, margin: '0 0 4px' }}>
                   {person.name}
                 </h3>
                 <div style={{ fontSize: 14, fontWeight: 600, color: person.accent, marginBottom: 16 }}>{person.title}</div>
-                <p style={{ fontSize: 15, color: 'var(--flouv-text)', lineHeight: 1.65, margin: '0 0 24px' }}>{person.bio}</p>
+                <p style={{ fontSize: 14.5, color: 'var(--flouv-text)', lineHeight: 1.65, margin: '0 0 18px' }}>{person.bio}</p>
                 <div style={{ display: 'flex', gap: 20 }}>
                   <a
                     href={person.linkedin}
@@ -335,13 +370,14 @@ export default function About() {
                     {person.email}
                   </a>
                 </div>
+                </div>
               </div>
             ))}
           </div>
         </section>
 
         {/* PARTNERSHIP */}
-        <section style={{ background: 'var(--flouv-bg-soft)', padding: '76px 56px' }}>
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '54px 56px' }}>
           <div style={{ maxWidth: 1280, margin: '0 auto' }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               PARTNER WITH FLOUV
@@ -424,7 +460,7 @@ export default function About() {
         </section>
 
         {/* CASE STUDY — WHC LABS */}
-        <section style={{ padding: '68px 56px' }}>
+        <section style={{ padding: '50px 56px' }}>
           <div style={{ maxWidth: 940, margin: '0 auto' }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               CASE STUDY · WHC LABS
@@ -482,13 +518,13 @@ export default function About() {
                   Start a collaboration →
                 </button>
               </div>
-              <PartnerLogoSlot name="WHC Labs" />
+              <WhcLabLogo />
             </div>
           </div>
         </section>
 
         {/* CASE STUDY — JUICING SYSTEMS */}
-        <section style={{ background: 'var(--flouv-bg-soft)', padding: '68px 56px' }}>
+        <section style={{ background: 'var(--flouv-bg-soft)', padding: '50px 56px' }}>
           <div style={{ maxWidth: 940, margin: '0 auto' }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               CASE STUDY · JUICING SYSTEMS
@@ -546,13 +582,13 @@ export default function About() {
                   Explore a distribution partnership →
                 </button>
               </div>
-              <PartnerLogoSlot name="Juicing Systems" />
+              <JuicingSystemsLogo />
             </div>
           </div>
         </section>
 
         {/* CASE STUDY — ELEFQ */}
-        <section style={{ padding: '68px 56px' }}>
+        <section style={{ padding: '50px 56px' }}>
           <div style={{ maxWidth: 940, margin: '0 auto' }}>
             <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', color: 'var(--flouv-blue)', marginBottom: 12 }}>
               CASE STUDY · ELEFQ MARKET SOLUTIONS
@@ -621,7 +657,7 @@ export default function About() {
         <section
           style={{
             background: 'linear-gradient(135deg, var(--flouv-blue), var(--flouv-blue-deep))',
-            padding: '84px 56px',
+            padding: '60px 56px',
             textAlign: 'center',
           }}
         >

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout.jsx';
+import { useChat } from '../context/ChatContext.jsx';
 
 const SUGGESTED_QUESTIONS = [
   'Does this work on whole milk?',
@@ -12,6 +13,8 @@ const SUGGESTED_QUESTIONS = [
 export default function FAQ() {
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
+  const { messages } = useChat();
+  const hasHistory = messages.length > 0;
 
   const ask = () => {
     const trimmed = query.trim();
@@ -56,6 +59,29 @@ export default function FAQ() {
             <p style={{ fontSize: 17, color: 'var(--flouv-text)', lineHeight: 1.6, margin: '0 auto 40px', maxWidth: 620 }}>
               Ask about applications, ROI, or the science — get an instant, expert answer.
             </p>
+
+            {hasHistory && (
+              <button
+                onClick={() => navigate('/answer')}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  background: 'var(--flouv-white)',
+                  border: '1px solid var(--flouv-border)',
+                  borderRadius: 100,
+                  padding: '10px 20px',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: 'var(--flouv-blue)',
+                  cursor: 'pointer',
+                  marginBottom: 24,
+                  fontFamily: "'Inter', sans-serif",
+                }}
+              >
+                ↩ Continue your conversation
+              </button>
+            )}
 
             <div
               style={{

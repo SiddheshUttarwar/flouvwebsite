@@ -11,14 +11,14 @@ import differentiateImage from '../../uploads/Diffrentiate your product image .p
 import heroImage from '../../uploads/home-hero-banner.webp';
 import howItWorksImage from '../../uploads/reactor-inside.jpg';
 
-const SUSTAINABILITY_STATS = [
+export const SUSTAINABILITY_STATS = [
   { value: '~82%', label: 'Lower energy intensity (EEO) than HTST thermal pasteurization' },
   { value: '85–90%', label: 'Lower CO₂ emissions per m³ treated, grid-average electricity' },
   { value: '~60%', label: 'Less water use — no chilled-water loop or thermal CIP cycles' },
   { value: '<2 months', label: 'Typical carbon payback period per installed system' },
 ];
 
-const HOW_IT_WORKS = [
+export const HOW_IT_WORKS = [
   {
     tag: '01 — FLOW',
     title: 'Engineered fluid path',
@@ -36,7 +36,7 @@ const HOW_IT_WORKS = [
   },
 ];
 
-const FLOUV_INSIGHTS = [
+export const FLOUV_INSIGHTS = [
   {
     label: 'Product Integrity',
     title: 'When liquids stay alive',
@@ -75,7 +75,7 @@ const FLOUV_INSIGHTS = [
   },
 ];
 
-const SOLUTIONS = [
+export const SOLUTIONS = [
   {
     title: 'For processors',
     body: 'Innovate your product line with a non-thermal solution — FloUV drops into dairy, juice, and beverage lines you already run, without a full redesign.',

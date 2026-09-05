@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/extract-site-content.mjs",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sync-site-content": "node scripts/extract-site-content.mjs"
   },
   "dependencies": {
     "dompurify": "^3.4.14",
@@ -18,6 +20,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",
+    "esbuild": "^0.21.5",
     "vite": "^5.4.8"
   }
 }

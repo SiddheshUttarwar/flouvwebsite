@@ -104,8 +104,11 @@ def _run():
 
         files_processed, message = drive_loader.load_folder_contents(progress_callback=on_progress)
 
-        # Stage 1: ingest + normalize, from the structured sidecar (not a merged blob)
-        documents = rag_ingest.load_sidecar_documents()
+        # Stage 1: ingest + normalize, from the structured sidecar (not a merged
+        # blob) plus the site's own marketing copy (Industries/Technology/Home/
+        # About, kept in sync by scripts/extract-site-content.mjs) — both flow
+        # through the identical chunk/embed/citation pipeline below.
+        documents = rag_ingest.load_sidecar_documents() + rag_ingest.load_site_content_documents()
         all_chunks = []
         for doc in documents:
             chunks = rag_ingest.normalize_and_chunk(doc)

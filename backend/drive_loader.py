@@ -1,6 +1,7 @@
 import os
 import io
 import json
+import logging
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
@@ -19,9 +20,36 @@ except ImportError:
 
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 
+# Same setup as rag/observability.py's logger — a plain StreamHandler so
+# `print()`-style visibility survives in Render's log viewer, but now with
+# timestamps/levels and consistent per-file lines instead of ad hoc prints
+# (which also silently said nothing at all on a *successful* file, only on
+# skip/failure — you could ever tell a sync ran and just did nothing).
+logger = logging.getLogger("flouv.drive_sync")
+if not logger.handlers:
+    _handler = logging.StreamHandler()
+    _handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s"))
+    logger.addHandler(_handler)
+    logger.setLevel(logging.INFO)
+
 # We only need read-only access to Drive files
 SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 FOLDER_ID = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
+
+# Folders never descended into during sync, by name (case-insensitive,
+# whitespace-trimmed since Drive folder names in the wild carry stray
+# trailing spaces) — matched anywhere in the tree, not just at the top level.
+# This is the only thing standing between confidential/IP documents (patent
+# filings, internal engineering detail, client-specific presentations) and a
+# public chatbot that will happily quote whatever it's given to anonymous
+# website visitors. Defaults reflect what's actually in the FloUV Shared
+# Drive; override via env var if the folder structure changes.
+_DEFAULT_EXCLUDED_FOLDERS = "FloUV - Technology & IP,Client Presentations,Desgin and Engineering"
+EXCLUDED_FOLDER_NAMES = {
+    name.strip().lower()
+    for name in os.getenv("GOOGLE_DRIVE_EXCLUDE_FOLDER_NAMES", _DEFAULT_EXCLUDED_FOLDERS).split(",")
+    if name.strip()
+}
 
 # All state files live next to this module rather than being resolved against
 # the current working directory, so `alembic`/`uvicorn`/tests invoked from the
@@ -69,6 +97,69 @@ def _get_thread_service(creds):
     return service
 
 
+_FOLDER_MIME = "application/vnd.google-apps.folder"
+
+
+def _resolve_drive_id(service, folder_id: str) -> str | None:
+    """Returns folder_id itself if it's actually the root of a Shared Drive,
+    else None. Shared Drive content is invisible to a plain files().list()
+    parents-query unless supportsAllDrives/includeItemsFromAllDrives (and,
+    for a shared-drive root specifically, corpora='drive' + driveId) are set
+    — omitting them doesn't error, it just silently returns zero files, which
+    looks identical to "the folder is empty"."""
+    try:
+        service.drives().get(driveId=folder_id).execute()
+        return folder_id
+    except Exception:
+        return None
+
+
+def _list_children(service, parent_id: str, drive_id: str | None) -> list[dict]:
+    kwargs = dict(
+        q=f"'{parent_id}' in parents and trashed=false",
+        fields="nextPageToken, files(id, name, mimeType, modifiedTime)",
+        supportsAllDrives=True,
+        includeItemsFromAllDrives=True,
+    )
+    if drive_id:
+        kwargs["corpora"] = "drive"
+        kwargs["driveId"] = drive_id
+
+    items = []
+    page_token = None
+    while True:
+        if page_token:
+            kwargs["pageToken"] = page_token
+        results = service.files().list(**kwargs).execute()
+        items.extend(results.get("files", []))
+        page_token = results.get("nextPageToken")
+        if not page_token:
+            break
+    return items
+
+
+def _list_all_files_recursive(service, root_id: str, drive_id: str | None) -> list[dict]:
+    """BFS through root_id and every subfolder beneath it (except
+    EXCLUDED_FOLDER_NAMES, never descended into), returning a flat list of
+    every non-folder file found at any depth. The Drive folder here isn't a
+    flat bucket of documents — it has real subfolder structure — so only
+    listing direct children would silently skip most of the actual knowledge
+    base."""
+    all_files = []
+    folders_to_visit = [root_id]
+    while folders_to_visit:
+        parent_id = folders_to_visit.pop()
+        for item in _list_children(service, parent_id, drive_id):
+            if item["mimeType"] == _FOLDER_MIME:
+                if item["name"].strip().lower() in EXCLUDED_FOLDER_NAMES:
+                    logger.info("SKIP  folder excluded from sync (IP/confidential): %s", item["name"])
+                    continue
+                folders_to_visit.append(item["id"])
+            else:
+                all_files.append(item)
+    return all_files
+
+
 def extract_pdf_text(file_stream):
     reader = PyPDF2.PdfReader(file_stream)
     text = ""
@@ -80,7 +171,11 @@ def extract_pdf_text(file_stream):
 
 
 def _download_media(service, file_id) -> bytes:
-    request = service.files().get_media(fileId=file_id)
+    # export_media (Google Docs/Sheets, below) doesn't accept this param at
+    # all — Drive API rejects it with a TypeError — but get_media (plain
+    # files: text/PDF) needs it or a Shared Drive file 404s despite having
+    # just been listed successfully.
+    request = service.files().get_media(fileId=file_id, supportsAllDrives=True)
     fh = io.BytesIO()
     downloader = MediaIoBaseDownload(fh, request)
     done = False
@@ -120,12 +215,21 @@ def _process_one_file(creds, item: dict) -> dict | None:
         elif mime_type == 'application/pdf':
             content = extract_pdf_text(io.BytesIO(_download_media(service, file_id)))
         else:
-            print(f"Skipping unsupported MIME type: {mime_type} for file {file_name}")
+            logger.info("SKIP  (unsupported type %s): %s", mime_type, file_name)
             return None
     except Exception as e:
-        print(f"Failed to process {file_name}: {e}")
+        logger.warning("FAIL  %s: %s", file_name, e)
         return None
 
+    if not content.strip():
+        # A PDF with no extractable text (scanned/image-only, no OCR here) or an
+        # empty Doc "succeeds" technically but contributes nothing to the
+        # knowledge base — worth its own log line, since it looks identical to
+        # a real success in the state file otherwise.
+        logger.warning("EMPTY (no extractable text): %s", file_name)
+        return None
+
+    logger.info("OK    ingested %s (%s, %d chars)", file_name, mime_type, len(content))
     return {
         "file_id": file_id,
         "filename": file_name,
@@ -150,23 +254,43 @@ def load_folder_contents(progress_callback=None):
     creds = get_credentials()
     service = build('drive', 'v3', credentials=creds, cache_discovery=False)
 
-    # Query for all files in the folder, paginating through all results
-    query = f"'{FOLDER_ID}' in parents and trashed=false"
-    items = []
-    page_token = None
-    while True:
-        kwargs = dict(q=query, fields="nextPageToken, files(id, name, mimeType, modifiedTime)")
-        if page_token:
-            kwargs["pageToken"] = page_token
-        results = service.files().list(**kwargs).execute()
-        items.extend(results.get('files', []))
-        page_token = results.get('nextPageToken')
-        if not page_token:
-            break
+    # Resolve and log the folder's actual name, not just its opaque ID — the
+    # whole point of this log line is "am I even looking at the right
+    # folder", which a raw ID string doesn't answer. Best-effort: a lookup
+    # failure here (wrong ID, no access) shouldn't block the sync attempt
+    # itself — the files().list() call right after will surface that error
+    # properly if the folder is genuinely inaccessible.
+    try:
+        folder_meta = service.files().get(fileId=FOLDER_ID, fields="id, name", supportsAllDrives=True).execute()
+        folder_name = folder_meta.get("name", "(unknown)")
+    except Exception as e:
+        # A Shared Drive root isn't addressable via files().get() the same
+        # way a regular folder is — fall back to drives().get(), which _is_
+        # how _resolve_drive_id (below) actually confirms it's a Shared Drive.
+        try:
+            drive_meta = service.drives().get(driveId=FOLDER_ID, fields="name").execute()
+            folder_name = drive_meta.get("name", "(unknown)")
+        except Exception:
+            folder_name = "(could not resolve folder name)"
+            logger.warning("Failed to look up folder metadata for id=%s: %s", FOLDER_ID, e)
+    logger.info("Starting Drive sync — folder: '%s' (id: %s)", folder_name, FOLDER_ID)
+
+    # Works for both a regular folder and a Shared Drive root — for the
+    # latter, _resolve_drive_id detects it and _list_children adds the
+    # required corpora/driveId params (a plain parents-query against a Shared
+    # Drive silently returns zero files instead of erroring).
+    drive_id = _resolve_drive_id(service, FOLDER_ID)
+    if drive_id:
+        logger.info("'%s' is a Shared Drive root — querying with Shared Drive support.", folder_name)
+    items = _list_all_files_recursive(service, FOLDER_ID, drive_id)
 
     if not items:
-        print("No files found in the specified Google Drive folder.")
+        logger.info("Folder '%s' is empty (or contains no visible files) — nothing to sync.", folder_name)
         return 0, "No files found in the specified Google Drive folder."
+
+    logger.info("Found %d file(s) in '%s':", len(items), folder_name)
+    for item in items:
+        logger.info("  seen: %s (%s)", item['name'], item['mimeType'])
 
     # Load previously processed files so we skip duplicates
     if os.path.exists(STATE_FILE):
@@ -179,13 +303,22 @@ def load_folder_contents(progress_callback=None):
         item for item in items
         if not (item['id'] in state and state[item['id']] == item.get('modifiedTime', ''))
     ]
+    already_up_to_date = len(items) - len(to_process)
 
     if progress_callback:
         progress_callback(0, len(to_process))
 
     if not to_process:
-        print("No new or updated files found in Google Drive. Knowledge base is already up to date!")
+        logger.info(
+            "All %d file(s) already up to date (unchanged since last sync) — nothing to do.",
+            already_up_to_date,
+        )
         return 0, "All files are already up to date — nothing to sync!"
+
+    logger.info(
+        "%d file(s) new or changed since last sync, %d already up to date. Ingesting the %d...",
+        len(to_process), already_up_to_date, len(to_process),
+    )
 
     updated_state = state.copy()
     sidecar_updates = {}
@@ -210,7 +343,13 @@ def load_folder_contents(progress_callback=None):
                     progress_callback(done_count, len(to_process))
 
     files_processed = len(sidecar_updates)
+    files_skipped_or_failed = len(to_process) - files_processed
     if files_processed == 0:
+        logger.warning(
+            "None of the %d attempted file(s) could be ingested — all were unsupported types, "
+            "empty, or failed. See per-file lines above for which and why.",
+            len(to_process),
+        )
         return 0, "No files could be processed — all downloads failed or were unsupported types."
 
     # Persist the structured per-document sidecar the RAG pipeline chunks from.
@@ -228,6 +367,10 @@ def load_folder_contents(progress_callback=None):
     with open(STATE_FILE, "w") as f:
         json.dump(updated_state, f)
 
+    logger.info(
+        "Sync complete: %d ingested, %d skipped/failed, %d already up to date (%d found in folder total).",
+        files_processed, files_skipped_or_failed, already_up_to_date, len(items),
+    )
     return files_processed, f"✅ {files_processed} file{'s' if files_processed != 1 else ''} successfully synced!"
 
 
