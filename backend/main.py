@@ -558,7 +558,7 @@ DIST_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'dist')
 if os.path.isdir(os.path.join(DIST_DIR, 'assets')):
     app.mount('/assets', StaticFiles(directory=os.path.join(DIST_DIR, 'assets')), name='assets')
 
-@app.get('/{full_path:path}')
+@app.api_route('/{full_path:path}', methods=["GET", "HEAD"])
 async def serve_frontend(full_path: str):
     # Resolve the requested path and ensure it stays inside DIST_DIR to prevent
     # path traversal (e.g. "../../etc/passwd"); otherwise fall through to the SPA.

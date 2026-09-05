@@ -1,3 +1,6 @@
+# Local editor/tool config, not shared via GitHub
+.claude/
+
 # Python
 __pycache__/
 *.py[cod]
