@@ -18,13 +18,23 @@ from pydantic import BaseModel
 try:
     from . import models, schemas
     from .database import engine, get_db
+    from .rag import config as rag_config
 except ImportError:
     import models, schemas
     from database import engine, get_db
+    from rag import config as rag_config
 
-# Ensure uploads directory exists
-UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "uploads")
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+# Uploads live under PERSIST_DIR (a Render attached disk, when configured) so
+# they survive restarts/redeploys instead of the ephemeral container
+# filesystem. On first boot against an empty disk, seed it from the repo's
+# checked-in defaults (blog images etc.) so nothing 404s before anyone
+# re-uploads through /admin.
+UPLOAD_DIR = os.path.join(rag_config.PERSIST_DIR, "uploads")
+_repo_upload_dir = os.path.join(os.path.dirname(__file__), "uploads")
+if not os.path.exists(UPLOAD_DIR) and os.path.isdir(_repo_upload_dir):
+    shutil.copytree(_repo_upload_dir, UPLOAD_DIR)
+else:
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 app = FastAPI(title="FloUV API", version="1.0.0")
 

@@ -55,13 +55,18 @@ EXCLUDED_FOLDER_NAMES = {
 # the current working directory, so `alembic`/`uvicorn`/tests invoked from the
 # repo root (instead of backend/) still read and write the same files.
 _MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
-STATE_FILE = os.path.join(_MODULE_DIR, "processed_files.json")
+STATE_FILE = os.path.join(rag_config.PERSIST_DIR, "processed_files.json")
 # Structured per-document sidecar consumed by the RAG pipeline's ingest/normalize
 # stage (backend/rag/ingest.py) — preserves real per-source-file boundaries so
-# citations can point at an actual filename.
-SIDECAR_FILE = os.path.join(_MODULE_DIR, "kb_sidecar.json")
-TOKEN_FILE = os.path.join(_MODULE_DIR, "token.json")
-CREDENTIALS_FILE = os.path.join(_MODULE_DIR, "credentials.json")
+# citations can point at an actual filename. Shares rag_config's path so both
+# modules agree on where it lives once PERSIST_DIR is set.
+SIDECAR_FILE = rag_config.KB_SIDECAR_PATH
+# OAuth files — can't be re-obtained headlessly (the flow needs a browser),
+# so on a persistent disk these must be uploaded once and then survive every
+# restart/redeploy; without PERSIST_DIR they're wiped on every restart of a
+# free-tier instance and must be re-uploaded each time.
+TOKEN_FILE = os.path.join(rag_config.PERSIST_DIR, "token.json")
+CREDENTIALS_FILE = os.path.join(rag_config.PERSIST_DIR, "credentials.json")
 
 # Each worker thread gets its own Drive service — googleapiclient's service
 # objects (and the http transport they wrap) aren't safe to share across
@@ -80,7 +85,10 @@ def get_credentials():
             creds.refresh(Request())
         else:
             if not os.path.exists(CREDENTIALS_FILE):
-                raise FileNotFoundError("credentials.json not found! Please download your OAuth client ID credentials from Google Cloud Console and save it as backend/credentials.json.")
+                raise FileNotFoundError(
+                    f"credentials.json not found! Please download your OAuth client ID credentials "
+                    f"from Google Cloud Console and save it to {CREDENTIALS_FILE}."
+                )
             flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
