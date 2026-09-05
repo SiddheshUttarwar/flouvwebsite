@@ -44,7 +44,7 @@ FOLDER_ID = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
 # public chatbot that will happily quote whatever it's given to anonymous
 # website visitors. Defaults reflect what's actually in the FloUV Shared
 # Drive; override via env var if the folder structure changes.
-_DEFAULT_EXCLUDED_FOLDERS = "FloUV - Technology & IP,Client Presentations,Desgin and Engineering"
+_DEFAULT_EXCLUDED_FOLDERS = "FloUV - Technology & IP,Client Presentations,Design and Engineering"
 EXCLUDED_FOLDER_NAMES = {
     name.strip().lower()
     for name in os.getenv("GOOGLE_DRIVE_EXCLUDE_FOLDER_NAMES", _DEFAULT_EXCLUDED_FOLDERS).split(",")
