@@ -59,11 +59,11 @@ export default function Admin() {
 
   return (
     <Layout active="Admin">
-      <main style={{ padding: '40px 56px 64px', background: 'var(--flouv-bg-soft)', minHeight: '80vh' }}>
+      <main className="admin-main" style={{ padding: '40px 56px 64px', background: 'var(--flouv-bg-soft)', minHeight: '80vh' }}>
         <div style={{ maxWidth: 1160, margin: '0 auto' }}>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
-            <nav style={{ display: 'flex', gap: 4, background: 'var(--flouv-white)', padding: 4, borderRadius: 10, border: '1px solid var(--flouv-border)' }}>
+          <div className="admin-topbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28, gap: 12 }}>
+            <nav className="tab-scroll admin-tabs" style={{ display: 'flex', gap: 4, background: 'var(--flouv-white)', padding: 4, borderRadius: 10, border: '1px solid var(--flouv-border)' }}>
               {TABS.map((tab) => (
                 <button
                   key={tab.key}
@@ -79,6 +79,8 @@ export default function Admin() {
                     background: activeTab === tab.key ? 'var(--flouv-blue)' : 'transparent',
                     color: activeTab === tab.key ? 'var(--flouv-white)' : 'var(--flouv-text)',
                     transition: 'all 0.15s ease',
+                    flexShrink: 0,
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {tab.label}
@@ -87,7 +89,8 @@ export default function Admin() {
             </nav>
             <button
               onClick={handleLogout}
-              style={{ background: 'none', border: '1px solid var(--flouv-border)', color: 'var(--flouv-muted)', borderRadius: 6, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+              className="admin-logout-btn"
+              style={{ background: 'none', border: '1px solid var(--flouv-border)', color: 'var(--flouv-muted)', borderRadius: 6, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer', flexShrink: 0 }}
             >
               Log out
             </button>

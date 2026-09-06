@@ -218,6 +218,27 @@ a {
     grid-template-columns: 1fr !important;
   }
 
+  /* Grid items default to min-width: auto, which lets a child's content
+     (e.g. a nowrap-truncated span computing its "75%" against an
+     already-oversized parent) keep the grid track wider than the actual
+     collapsed 1-column width instead of shrinking to it — causing the page
+     to overflow horizontally even though the grid itself "collapsed". */
+  [style*="grid-template-columns: repeat(3, 1fr)"] > *,
+  [style*="grid-template-columns: repeat(4, 1fr)"] > *,
+  [style*="grid-template-columns: repeat(2, 1fr)"] > *,
+  [style*="grid-template-columns: 1fr 1fr"] > *,
+  [style*="grid-template-columns: 0.9fr 1.1fr"] > *,
+  [style*="grid-template-columns: 1.1fr 1fr"] > *,
+  [style*="grid-template-columns: 1fr 200px"] > *,
+  [style*="grid-template-columns: 200px 1fr"] > *,
+  [style*="grid-template-columns: 1.2fr 0.8fr"] > *,
+  [style*="grid-template-columns: 1.3fr 1fr"] > *,
+  [style*="grid-template-columns: 1.45fr 1fr"] > *,
+  [style*="grid-template-columns: 1.4fr 1fr"] > *,
+  [style*="grid-template-columns: 1.1fr 0.9fr"] > * {
+    min-width: 0 !important;
+  }
+
   /* No !important here on purpose — an element that already sets flexWrap
      inline (e.g. an intentional horizontal scroller) keeps winning, since
      inline styles beat a plain stylesheet rule. This only fills in flex
@@ -282,6 +303,22 @@ a {
   }
   .ask-flouv-btn {
     width: 100%;
+  }
+
+  /* Admin panel: same tab-strip overflow as Industries, plus a Logout
+     button that has nowhere to go in the same row on a phone. */
+  .admin-main {
+    padding: 24px 16px 40px !important;
+  }
+  .admin-topbar {
+    flex-wrap: nowrap !important;
+  }
+  .admin-tabs {
+    min-width: 0;
+  }
+  .admin-logout-btn {
+    padding: 8px 12px !important;
+    font-size: 12px !important;
   }
 }
 

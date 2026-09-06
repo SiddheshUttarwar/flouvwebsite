@@ -192,13 +192,13 @@ export default function KnowledgeBaseTab() {
                 No documents synced yet. Run a sync to pull in your Drive folder.
               </div>
             ) : (
-              <div style={{ overflowX: 'auto' }}>
+              <div style={{ overflow: 'auto', maxHeight: 420 }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr>
-                      <th style={{ textAlign: 'left', padding: '10px 14px', fontSize: 11, fontWeight: 700, color: 'var(--flouv-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid var(--flouv-border)' }}>File</th>
-                      <th style={{ textAlign: 'left', padding: '10px 14px', fontSize: 11, fontWeight: 700, color: 'var(--flouv-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid var(--flouv-border)' }}>Last ingested</th>
-                      <th style={{ textAlign: 'right', padding: '10px 14px', fontSize: 11, fontWeight: 700, color: 'var(--flouv-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid var(--flouv-border)' }}>Chunks</th>
+                      <th style={{ position: 'sticky', top: 0, background: 'var(--flouv-white)', textAlign: 'left', padding: '10px 14px', fontSize: 11, fontWeight: 700, color: 'var(--flouv-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid var(--flouv-border)' }}>File</th>
+                      <th style={{ position: 'sticky', top: 0, background: 'var(--flouv-white)', textAlign: 'left', padding: '10px 14px', fontSize: 11, fontWeight: 700, color: 'var(--flouv-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid var(--flouv-border)' }}>Last ingested</th>
+                      <th style={{ position: 'sticky', top: 0, background: 'var(--flouv-white)', textAlign: 'right', padding: '10px 14px', fontSize: 11, fontWeight: 700, color: 'var(--flouv-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid var(--flouv-border)' }}>Chunks</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -232,7 +232,7 @@ export default function KnowledgeBaseTab() {
                 No syncs recorded yet.
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', overflowY: 'auto', maxHeight: 420 }}>
                 {syncHistory.map((run) => (
                   <div key={run.id} style={{ padding: '12px 16px', borderBottom: '1px solid var(--flouv-border)', fontSize: 12.5 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
