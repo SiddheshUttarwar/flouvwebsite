@@ -79,19 +79,16 @@ def handle_chat(query: str, session_id: str | None, db: Session) -> dict:
     citations = []
     if fallback_triggered:
         answer_string = rag_fallback.serialize_safe_response()
-        chosen_image, _ = rag_fallback.safe_response()
         final_confidence = 0.0
     else:
         citations = rag_generation.build_citations(output, scored)
         answer_string = rag_generation.serialize_legacy(output, citations)
-        chosen_image = output.image
         final_confidence = agg_confidence
 
     memory.append_message(db, session_id, "assistant", answer_string)
 
     # Stage 10: observability
     trace["fallback_triggered"] = fallback_triggered
-    trace["chosen_image"] = chosen_image
     trace["citations"] = [c.model_dump() for c in citations]
     trace["prompt_tokens"] = usage["prompt_tokens"]
     trace["completion_tokens"] = usage["completion_tokens"]

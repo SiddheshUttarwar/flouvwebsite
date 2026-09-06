@@ -49,6 +49,242 @@ a {
   cursor: pointer;
 }
 
+/* Site header + mobile nav */
+.site-header {
+  position: sticky;
+  top: 24px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 26px;
+  max-width: 1200px;
+  margin: 24px auto 0;
+  background: var(--flouv-white);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--flouv-border-soft);
+  border-radius: 100px;
+  box-shadow: 0 8px 30px oklch(0.3 0.05 264 / 0.12);
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+}
+
+.site-header-blog-cta {
+  background: var(--flouv-green);
+  color: var(--flouv-green-ink);
+  padding: 10px 22px;
+  border-radius: 100px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.nav-toggle span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: var(--flouv-ink);
+  border-radius: 2px;
+}
+
+.mobile-menu {
+  display: none;
+}
+
+@media (max-width: 780px) {
+  .site-header {
+    top: 12px;
+    margin: 12px 16px 0;
+    padding: 12px 16px 12px 22px;
+    border-radius: 24px;
+  }
+  .site-nav,
+  .site-header-blog-cta {
+    display: none;
+  }
+  .nav-toggle {
+    display: flex;
+  }
+  .mobile-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    position: fixed;
+    top: 74px;
+    left: 16px;
+    right: 16px;
+    z-index: 49;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+    padding: 20px 22px;
+    background: var(--flouv-white);
+    border: 1px solid var(--flouv-border-soft);
+    border-radius: 20px;
+    box-shadow: 0 8px 30px oklch(0.3 0.05 264 / 0.12);
+  }
+}
+
+/* Site footer */
+.site-footer {
+  border-top: 1px solid var(--flouv-border);
+  background: var(--flouv-blue-deep);
+  color: var(--flouv-white);
+  padding: 64px 56px 40px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 40px;
+}
+
+.footer-links-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 36px;
+}
+
+@media (max-width: 780px) {
+  .site-footer {
+    padding: 48px 24px 32px;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 520px) {
+  .footer-links-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+
+/* Retrofit-responsive overrides — pages set gridTemplateColumns and section
+   side-padding inline (can't contain media queries), and the same handful of
+   multi-column patterns repeat across ~10 page files. Rather than touching
+   every call site, match the exact inline style strings React serializes to
+   the DOM (gridTemplateColumns -> grid-template-columns, kebab-cased) and
+   override with !important, which wins over an inline shorthand's
+   corresponding longhand regardless of what set it. */
+@media (max-width: 900px) {
+  [style*="grid-template-columns: repeat(3, 1fr)"],
+  [style*="grid-template-columns: repeat(4, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  [style*="grid-template-columns: repeat(3, 1fr)"],
+  [style*="grid-template-columns: repeat(4, 1fr)"],
+  [style*="grid-template-columns: repeat(2, 1fr)"],
+  [style*="grid-template-columns: 1fr 1fr"],
+  [style*="grid-template-columns: 0.9fr 1.1fr"],
+  [style*="grid-template-columns: 1.1fr 1fr"],
+  [style*="grid-template-columns: 1fr 200px"],
+  [style*="grid-template-columns: 200px 1fr"],
+  [style*="grid-template-columns: 1.2fr 0.8fr"],
+  [style*="grid-template-columns: 1.3fr 1fr"],
+  [style*="grid-template-columns: 1.45fr 1fr"],
+  [style*="grid-template-columns: 1.4fr 1fr"],
+  [style*="grid-template-columns: 1.1fr 0.9fr"],
+  [style*="grid-template-columns: repeat(auto-fill, minmax(450px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* No !important here on purpose — an element that already sets flexWrap
+     inline (e.g. an intentional horizontal scroller) keeps winning, since
+     inline styles beat a plain stylesheet rule. This only fills in flex
+     containers that never considered wrapping at all.
+     Excludes flexDirection: column containers — wrap on a column flex means
+     "start a new column beside this one" once it runs out of height, which
+     is exactly wrong for a scrolling vertical list (e.g. chat messages)
+     and would put later items beside earlier ones instead of below them. */
+  [style*="display: flex"]:not([style*="flex-direction: column"]) {
+    flex-wrap: wrap;
+  }
+
+  /* Tab strips (e.g. Industries' Dairy/Juices/Beverages/... bar) look worse
+     wrapped into multiple rows under a sticky bar than scrolled — overrides
+     the generic flex-wrap rule above for just these. */
+  .tab-scroll {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tab-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* FAQ's suggested-question chips are auto-width (sized to each question's
+     text), so short and long questions end up as visibly mismatched pill
+     sizes once wrapped on a narrow screen. Stack them full-width instead so
+     every chip reads as the same shape. */
+  .suggested-questions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .suggested-questions button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .answer-page {
+    padding: 32px 12px !important;
+  }
+  .answer-messages {
+    padding: 24px 20px !important;
+  }
+  .answer-input-form {
+    padding: 16px 20px !important;
+    flex-direction: column !important;
+    align-items: stretch;
+  }
+  .answer-send-btn {
+    width: 100%;
+    padding: 14px 32px !important;
+  }
+
+  /* FAQ's "Ask FloUV" bar — same input+button overlap problem as the chat
+     Send button, same fix: input on its own row, button full-width below. */
+  .ask-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    border-radius: 20px !important;
+    padding: 14px 16px !important;
+  }
+  .ask-flouv-btn {
+    width: 100%;
+  }
+}
+
 /* Home — industries band */
 .industry-band {
   display: grid;

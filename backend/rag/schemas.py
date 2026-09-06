@@ -1,8 +1,6 @@
 """Pydantic models shared across the RAG pipeline stages."""
-from typing import Literal, Optional
+from typing import Optional
 from pydantic import BaseModel
-
-from . import config
 
 
 class Chunk(BaseModel):
@@ -31,7 +29,6 @@ class ScoredChunk(BaseModel):
 
 
 class GenerationOutput(BaseModel):
-    image: Literal[config.VALID_IMAGES[0], config.VALID_IMAGES[1], config.VALID_IMAGES[2]]
     answer_markdown: str
     insufficient_context: bool
 

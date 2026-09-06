@@ -494,7 +494,7 @@ export default function Industries() {
 
         {/* TABS */}
         <section style={{ borderBottom: '1px solid var(--flouv-border)', position: 'sticky', top: 0, background: 'var(--flouv-white)', zIndex: 10 }}>
-          <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', gap: 8, padding: '0 56px' }}>
+          <div className="tab-scroll" style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', gap: 8, padding: '0 56px' }}>
             {INDUSTRIES.map((industry) => {
               const isActive = industry.id === activeId;
               return (
@@ -511,6 +511,8 @@ export default function Industries() {
                     color: isActive ? 'var(--flouv-blue)' : 'var(--flouv-muted)',
                     cursor: 'pointer',
                     fontFamily: "'Inter', sans-serif",
+                    flexShrink: 0,
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {industry.label}
@@ -753,20 +755,23 @@ export default function Industries() {
                       to={`/answer?q=${encodeURIComponent(q)}`}
                       style={{
                         display: 'flex',
+                        flexWrap: 'nowrap',
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         gap: 14,
                         background: 'var(--flouv-white)',
                         border: '1px solid var(--flouv-border)',
-                        borderRadius: 100,
+                        borderRadius: 14,
                         padding: '13px 20px',
+                        minHeight: 66,
+                        boxSizing: 'border-box',
                         fontSize: 14,
                         lineHeight: 1.4,
                         color: 'var(--flouv-text)',
                         textDecoration: 'none',
                       }}
                     >
-                      <span>{q}</span>
+                      <span style={{ minWidth: 0 }}>{q}</span>
                       <span style={{ color: active.accent, fontWeight: 700, flexShrink: 0 }}>→</span>
                     </Link>
                   ))}

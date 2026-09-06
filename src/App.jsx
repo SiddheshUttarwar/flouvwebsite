@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { ChatProvider } from './context/ChatContext.jsx';
+import ScrollToTop from './components/ScrollToTop.jsx';
 import Home from './pages/Home.jsx';
 import Technology from './pages/Technology.jsx';
 import Industries from './pages/Industries.jsx';
@@ -15,6 +16,7 @@ import Placeholder from './pages/Placeholder.jsx';
 export default function App() {
   return (
     <ChatProvider>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/technology" element={<Technology />} />

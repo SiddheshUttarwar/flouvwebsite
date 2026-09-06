@@ -18,11 +18,5 @@ def should_fallback(
     return False
 
 
-def safe_response() -> tuple[str, str]:
-    """Returns (image, text) for the fixed fallback answer."""
-    return config.FALLBACK_IMAGE, config.FALLBACK_TEXT
-
-
 def serialize_safe_response() -> str:
-    image, text = safe_response()
-    return f"{image} ||| {text}"
+    return config.FALLBACK_TEXT

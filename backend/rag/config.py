@@ -63,11 +63,9 @@ CONFIDENCE_PER_CHUNK_FLOOR = float(os.getenv("CONFIDENCE_PER_CHUNK_FLOOR", "0.4"
 # per 1M tokens) — gemini-2.5-flash-lite is deprecated for new API keys.
 GENERATION_MODEL = os.getenv("GENERATION_MODEL", "gemini-3.1-flash-lite")
 GENERATION_MAX_TOKENS = int(os.getenv("GENERATION_MAX_TOKENS", "400"))
-VALID_IMAGES = ("dairy.png", "water.png", "uv.png")
 
 # --- Stage 7: hallucination fallback ---
 CONFIDENCE_FALLBACK_THRESHOLD = float(os.getenv("CONFIDENCE_FALLBACK_THRESHOLD", "0.45"))
-FALLBACK_IMAGE = "uv.png"
 FALLBACK_TEXT = (
     "I don't have enough verified information in the FloUV knowledge base to answer "
     "that confidently. Please reach out to our team directly for details on this."

@@ -1,10 +1,8 @@
 """Stage 5 + 6: constrained generation + citation-backed responses.
 
-Uses Gemini's structured-output JSON schema (not the old free-text
-"emit imagefile ||| answer" prompt) so the image choice is enum-enforced at the
-API level rather than hoped-for via prompt instructions. The result is then
-serialized back into the legacy `imagefile.png ||| markdown` string the
-frontend already parses, so the external contract is unchanged.
+Uses Gemini's structured-output JSON schema for `answer_markdown` and
+`insufficient_context`, so hallucination fallback routing is enforced at the
+API response level rather than hoped-for via prompt instructions.
 
 Uses the Interactions API (client.interactions.create), Gemini's current
 generation surface — not the older generate_content method. Notably, this API
@@ -30,11 +28,10 @@ def _get_client() -> genai.Client:
 _GENERATION_SCHEMA = {
     "type": "object",
     "properties": {
-        "image": {"type": "string", "enum": list(config.VALID_IMAGES)},
         "answer_markdown": {"type": "string"},
         "insufficient_context": {"type": "boolean"},
     },
-    "required": ["image", "answer_markdown", "insufficient_context"],
+    "required": ["answer_markdown", "insufficient_context"],
 }
 
 _SYSTEM_PROMPT = (
@@ -45,9 +42,7 @@ _SYSTEM_PROMPT = (
     "inline in `answer_markdown` using bracket markers like [1], [2] matching passage "
     "numbers. If the passages don't contain enough information to answer confidently, set "
     "`insufficient_context` to true and keep `answer_markdown` brief — do not guess or "
-    "use outside knowledge to fill gaps. Choose the single image filename that best fits "
-    "the topic: 'dairy.png' for milk/dairy, 'water.png' for water/juice/beverage, or "
-    "'uv.png' for general UV technology/science or when insufficient_context is true.\n\n"
+    "use outside knowledge to fill gaps.\n\n"
     "CONFIDENTIALITY — this is independent of and overrides the grounding rule above: the "
     "context passages are pulled from FloUV's internal document store and sometimes contain "
     "confidential material that ended up there for internal reasons, not because it's meant "
@@ -200,5 +195,4 @@ def serialize_legacy(output: GenerationOutput, citations: list[Citation]) -> str
     "FloUV_Cargill_Deck.pdf"), which can leak things like a customer
     relationship that the system prompt's confidentiality rules are
     specifically trying to keep out of visitor-facing answers."""
-    body = _MARKER_STRIP_RE.sub("", output.answer_markdown).strip()
-    return f"{output.image} ||| {body}"
+    return _MARKER_STRIP_RE.sub("", output.answer_markdown).strip()

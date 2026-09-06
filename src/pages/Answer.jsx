@@ -17,7 +17,7 @@ export default function Answer() {
   const [report, setReport] = useState(null);
   const [generatingReport, setGeneratingReport] = useState(false);
 
-  const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
   const initialFetchDone = useRef(false);
   // Snapshot taken once at mount, deliberately NOT the live `messages` state
   // below — fetchAnswer adds messages asynchronously, and stripping `?q=`
@@ -50,7 +50,11 @@ export default function Answer() {
   }, [location.search, navigate]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Scroll only the chat window's own message list, not scrollIntoView()
+    // (which walks up every scrollable ancestor, including the whole page,
+    // and was yanking the entire browser viewport down to the footer).
+    const el = messagesContainerRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [messages, loading]);
 
   const fetchAnswer = async (userQuery) => {
@@ -122,7 +126,7 @@ export default function Answer() {
 
   return (
     <Layout active="Home">
-      <div style={{ fontFamily: "'Inter', sans-serif", background: 'var(--flouv-bg-soft)', minHeight: '80vh', padding: '60px 24px' }}>
+      <div className="answer-page" style={{ fontFamily: "'Inter', sans-serif", background: 'var(--flouv-bg-soft)', minHeight: '80vh', padding: '60px 24px' }}>
         <div style={{ maxWidth: 800, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -159,7 +163,7 @@ export default function Answer() {
           <div style={{ background: 'var(--flouv-white)', borderRadius: 16, boxShadow: '0 12px 40px oklch(0.3 0.08 264 / 0.05)', border: '1px solid var(--flouv-border)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             
             {/* Messages Area */}
-            <div style={{ padding: '32px 40px', maxHeight: '60vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
+            <div ref={messagesContainerRef} className="answer-messages" style={{ padding: '32px 40px', maxHeight: '60vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
               {messages.map((msg, idx) => (
                 <div key={idx} style={{ alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
                   {msg.role === 'user' ? (
@@ -168,22 +172,7 @@ export default function Answer() {
                     </div>
                   ) : (
                     <div className="markdown-body" style={{ fontSize: 16, lineHeight: 1.7, color: 'var(--flouv-ink)' }}>
-                      {(() => {
-                        const parts = msg.content.split('|||');
-                        if (parts.length >= 2) {
-                          const imageName = parts[0].trim();
-                          const textContent = parts.slice(1).join('|||').trim();
-                          return (
-                            <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
-                              <img src={`/dynamic_images/${imageName}`} alt={imageName} style={{ width: '35%', borderRadius: 12, objectFit: 'cover', boxShadow: '0 8px 24px oklch(0.3 0.08 264 / 0.1)' }} />
-                              <div style={{ width: '65%' }}>
-                                <ReactMarkdown>{textContent}</ReactMarkdown>
-                              </div>
-                            </div>
-                          );
-                        }
-                        return <ReactMarkdown>{msg.content}</ReactMarkdown>;
-                      })()}
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
                     </div>
                   )}
                 </div>
@@ -204,11 +193,10 @@ export default function Answer() {
                   <strong>Error:</strong> {error}
                 </div>
               )}
-              <div ref={messagesEndRef} />
             </div>
 
             {/* Input Area */}
-            <form onSubmit={handleSubmit} style={{ borderTop: '1px solid var(--flouv-border)', padding: '20px 40px', background: 'var(--flouv-white)', display: 'flex', gap: 16 }}>
+            <form onSubmit={handleSubmit} className="answer-input-form" style={{ borderTop: '1px solid var(--flouv-border)', padding: '20px 40px', background: 'var(--flouv-white)', display: 'flex', gap: 16 }}>
               <input
                 type="text"
                 value={inputValue}
@@ -227,6 +215,7 @@ export default function Answer() {
               />
               <button
                 type="submit"
+                className="answer-send-btn"
                 disabled={loading || !inputValue.trim()}
                 style={{
                   background: 'var(--flouv-green)',

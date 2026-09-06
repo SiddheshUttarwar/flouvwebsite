@@ -72,6 +72,7 @@ function LocationEntry({ location }) {
 export default function Layout({ active, children }) {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleSignUp = (e) => {
     e.preventDefault();
@@ -82,28 +83,11 @@ export default function Layout({ active, children }) {
 
   return (
     <div style={{ minHeight: '100vh' }}>
-      <header
-        style={{
-          position: 'sticky',
-          top: 24,
-          zIndex: 50,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '14px 26px',
-          maxWidth: 1200,
-          margin: '24px auto 0',
-          background: 'var(--flouv-white)',
-          backdropFilter: 'blur(14px)',
-          border: '1px solid var(--flouv-border-soft)',
-          borderRadius: 100,
-          boxShadow: '0 8px 30px oklch(0.3 0.05 264 / 0.12)',
-        }}
-      >
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+      <header className="site-header">
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
           <img src={flouvLogo} alt="FloUV" style={{ height: 22, width: 'auto', display: 'block' }} />
         </Link>
-        <nav style={{ display: 'flex', alignItems: 'center', gap: 34 }}>
+        <nav className="site-nav">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.to}
@@ -119,42 +103,62 @@ export default function Layout({ active, children }) {
             </Link>
           ))}
         </nav>
-        <Link
-          to="/blog"
-          style={{
-            background: 'var(--flouv-green)',
-            color: 'var(--flouv-green-ink)',
-            padding: '10px 22px',
-            borderRadius: 100,
-            textDecoration: 'none',
-            fontSize: 14,
-            fontWeight: 700,
-          }}
-        >
+        <Link to="/blog" className="site-header-blog-cta">
           Blog
         </Link>
+        <button
+          type="button"
+          className="nav-toggle"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
       </header>
+
+      {menuOpen && (
+        <div className="mobile-menu">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              onClick={() => setMenuOpen(false)}
+              style={{
+                color: active === link.label ? 'var(--flouv-blue)' : 'var(--flouv-ink)',
+                textDecoration: 'none',
+                fontSize: 16,
+                fontWeight: active === link.label ? 600 : 500,
+              }}
+            >
+              {link.label}
+            </Link>
+          ))}
+          <Link
+            to="/blog"
+            onClick={() => setMenuOpen(false)}
+            style={{
+              background: 'var(--flouv-green)',
+              color: 'var(--flouv-green-ink)',
+              padding: '10px 22px',
+              borderRadius: 100,
+              textDecoration: 'none',
+              fontSize: 14,
+              fontWeight: 700,
+              textAlign: 'center',
+            }}
+          >
+            Blog
+          </Link>
+        </div>
+      )}
 
       {children}
 
-      <footer
-        style={{
-          borderTop: '1px solid var(--flouv-border)',
-          background: 'var(--flouv-blue-deep)',
-          color: 'var(--flouv-white)',
-          padding: '64px 56px 40px',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1280,
-            margin: '0 auto',
-            display: 'grid',
-            gridTemplateColumns: '1fr 2fr',
-            gap: 40,
-            marginBottom: 48,
-          }}
-        >
+      <footer className="site-footer">
+        <div className="footer-grid" style={{ maxWidth: 1280, margin: '0 auto', marginBottom: 48 }}>
           <div>
             <div style={{ marginBottom: 12, background: 'var(--flouv-white)', display: 'inline-block', padding: '6px 10px', borderRadius: 8 }}>
               <img src={flouvLogo} alt="FloUV" style={{ height: 20, width: 'auto', display: 'block' }} />
@@ -223,7 +227,7 @@ export default function Layout({ active, children }) {
             </a>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 36 }}>
+          <div className="footer-links-grid">
             <div>
               <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', color: 'oklch(0.75 0.03 260)', marginBottom: 16 }}>
                 FLOUV OFFICES

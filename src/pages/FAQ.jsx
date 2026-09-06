@@ -94,6 +94,7 @@ export default function FAQ() {
               }}
             >
               <div
+                className="ask-bar"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -104,25 +105,29 @@ export default function FAQ() {
                   padding: '6px 6px 6px 22px',
                 }}
               >
-                <span style={{ fontSize: 17, flexShrink: 0 }}>✨</span>
-                <input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onKeyDown={onKeyDown}
-                  placeholder="e.g. Does this work on whole milk?"
-                  style={{
-                    flex: 1,
-                    border: 'none',
-                    outline: 'none',
-                    background: 'transparent',
-                    fontSize: 16,
-                    fontFamily: "'Inter', sans-serif",
-                    color: 'var(--flouv-ink)',
-                    padding: '12px 0',
-                  }}
-                />
+                <div className="ask-input-row" style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 0 }}>
+                  <span style={{ fontSize: 17, flexShrink: 0 }}>✨</span>
+                  <input
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={onKeyDown}
+                    placeholder="e.g. Does this work on whole milk?"
+                    style={{
+                      flex: 1,
+                      minWidth: 0,
+                      border: 'none',
+                      outline: 'none',
+                      background: 'transparent',
+                      fontSize: 16,
+                      fontFamily: "'Inter', sans-serif",
+                      color: 'var(--flouv-ink)',
+                      padding: '12px 0',
+                    }}
+                  />
+                </div>
                 <button
                   onClick={ask}
+                  className="ask-flouv-btn"
                   style={{
                     background: 'var(--flouv-green)',
                     color: 'var(--flouv-green-ink)',
@@ -140,7 +145,7 @@ export default function FAQ() {
                 </button>
               </div>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginTop: 16 }}>
+              <div className="suggested-questions" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginTop: 16 }}>
                 {SUGGESTED_QUESTIONS.map((q) => (
                   <button
                     key={q}
