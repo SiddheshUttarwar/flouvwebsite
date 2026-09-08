@@ -98,6 +98,8 @@ export default function InquiriesTab() {
                 <tr>
                   <th style={thStyle}>Date</th>
                   <th style={thStyle}>Type</th>
+                  <th style={thStyle}>Subject</th>
+                  <th style={thStyle}>Routed to</th>
                   <th style={thStyle}>Name</th>
                   <th style={thStyle}>Company</th>
                   <th style={thStyle}>Email</th>
@@ -116,6 +118,22 @@ export default function InquiriesTab() {
                         {formatDate(inq.created_at)}
                       </td>
                       <td style={{ ...tdStyle, textTransform: 'capitalize', cursor: 'pointer' }} onClick={() => setExpandedId(expandedId === inq.id ? null : inq.id)}>{inq.mode}</td>
+                      <td
+                        style={{ ...tdStyle, maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', cursor: 'pointer' }}
+                        title={inq.subject || ''}
+                        onClick={() => setExpandedId(expandedId === inq.id ? null : inq.id)}
+                      >
+                        {inq.subject || '—'}
+                      </td>
+                      <td style={tdStyle} title={inq.notify_email || ''}>
+                        {inq.notify_name ? (
+                          <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--flouv-blue)', background: 'var(--flouv-blue-tint)', padding: '3px 9px', borderRadius: 100 }}>
+                            {inq.notify_name}
+                          </span>
+                        ) : (
+                          <span style={{ color: 'var(--flouv-muted)' }}>General inbox</span>
+                        )}
+                      </td>
                       <td style={tdStyle}>{inq.name || '—'}</td>
                       <td style={tdStyle}>{inq.company || '—'}</td>
                       <td style={tdStyle}>{inq.email || '—'}</td>
@@ -137,7 +155,7 @@ export default function InquiriesTab() {
                     </tr>
                     {expandedId === inq.id && (
                       <tr>
-                        <td colSpan={7} style={{ ...tdStyle, background: 'var(--flouv-bg-soft)', whiteSpace: 'pre-wrap', fontFamily: "'Inter', sans-serif", fontSize: 13 }}>
+                        <td colSpan={9} style={{ ...tdStyle, background: 'var(--flouv-bg-soft)', whiteSpace: 'pre-wrap', fontFamily: "'Inter', sans-serif", fontSize: 13 }}>
                           <strong>Subject:</strong> {inq.subject || '—'}
                           {'\n\n'}
                           {inq.message || '(no message)'}

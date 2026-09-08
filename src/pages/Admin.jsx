@@ -3,6 +3,7 @@ import Layout from '../components/Layout.jsx';
 import Login from './Login.jsx';
 import BlogsTab from './admin/BlogsTab.jsx';
 import InquiriesTab from './admin/InquiriesTab.jsx';
+import SignupsTab from './admin/SignupsTab.jsx';
 import AnalyticsTab from './admin/AnalyticsTab.jsx';
 import KnowledgeBaseTab from './admin/KnowledgeBaseTab.jsx';
 import HealthTab from './admin/HealthTab.jsx';
@@ -10,6 +11,7 @@ import HealthTab from './admin/HealthTab.jsx';
 const TABS = [
   { key: 'blogs', label: 'Blogs', component: BlogsTab },
   { key: 'inquiries', label: 'Inquiries', component: InquiriesTab },
+  { key: 'signups', label: 'Signups', component: SignupsTab },
   { key: 'analytics', label: 'Analytics', component: AnalyticsTab },
   { key: 'knowledge-base', label: 'Knowledge Base', component: KnowledgeBaseTab },
   { key: 'health', label: 'System Health', component: HealthTab },

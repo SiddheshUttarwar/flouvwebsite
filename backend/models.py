@@ -79,7 +79,30 @@ class Inquiry(Base):
     # Raw JSON-encoded copy of every field the form collected, so mode-specific
     # fields (region, vertical, years, etc.) aren't lost to the fixed columns above.
     raw_data = Column(Text)
+    # Set when the inquiry was opened via a specific FloUV contact's
+    # "Connect with X" button (e.g. Dirk Dubiel for EU dairy) rather than
+    # the generic "Book a Meeting" CTA — that person is also emailed
+    # alongside the standard notification inbox.
+    notify_email = Column(String, nullable=True)
+    notify_name = Column(String, nullable=True)
     handled = Column(Boolean, default=False, nullable=False, server_default="0")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class SignUp(Base):
+    """Every email address collected anywhere on the site — newsletter
+    signups, inquiry-form submissions, and report-delivery requests alike —
+    logged as its own row per capture event (not deduplicated), separate
+    from the full Inquiry record, so it doubles as a simple master email
+    list regardless of which form or button an address came through."""
+    __tablename__ = "signups"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, index=True, nullable=False)
+    # Where this email came from: "newsletter", an inquiry mode (meeting,
+    # report, general, collaboration, distribution, representation), or
+    # "ai_report_email" for the chat report's email-delivery flow.
+    source = Column(String, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 

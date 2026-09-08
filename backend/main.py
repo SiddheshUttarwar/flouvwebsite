@@ -4,7 +4,7 @@ import uuid
 import time
 from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone
-from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Request
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -16,11 +16,11 @@ from pydantic import BaseModel
 # `uvicorn backend.main:app` from repo root) and as a top-level module
 # (`uvicorn main:app` with backend/ as the working directory).
 try:
-    from . import models, schemas
+    from . import models, schemas, email_notify, signups, report_pdf
     from .database import engine, get_db
     from .rag import config as rag_config
 except ImportError:
-    import models, schemas
+    import models, schemas, email_notify, signups, report_pdf
     from database import engine, get_db
     from rag import config as rag_config
 
@@ -205,7 +205,7 @@ def get_blog(blog_id: int, db: Session = Depends(get_db)):
     return to_blog_response(blog)
 
 @app.post("/api/blogs", response_model=schemas.BlogResponse, dependencies=[Depends(verify_token)])
-def create_blog(blog: schemas.BlogCreate, db: Session = Depends(get_db)):
+def create_blog(blog: schemas.BlogCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     db_blog = models.Blog(
         title=blog.title,
         date=blog.date,
@@ -216,6 +216,8 @@ def create_blog(blog: schemas.BlogCreate, db: Session = Depends(get_db)):
     db.add(db_blog)
     db.commit()
     db.refresh(db_blog)
+    # Only on creation — never on update/delete, by design.
+    background_tasks.add_task(email_notify.send_newsletter_for_new_blog, db_blog.id, db_blog.title)
     return to_blog_response(db_blog)
 
 @app.put("/api/blogs/{blog_id}", response_model=schemas.BlogResponse, dependencies=[Depends(verify_token)])
@@ -254,12 +256,17 @@ INQUIRY_RATE_WINDOW = 10 * 60  # 10 minutes
 _inquiry_requests = defaultdict(deque)
 
 @app.post("/api/inquiries", response_model=schemas.InquiryResponse)
-def create_inquiry(inquiry: schemas.InquiryCreate, request: Request, db: Session = Depends(get_db)):
+def create_inquiry(inquiry: schemas.InquiryCreate, request: Request, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     _check_rate_limit(request, _inquiry_requests, INQUIRY_RATE_LIMIT, INQUIRY_RATE_WINDOW)
     db_inquiry = models.Inquiry(**inquiry.model_dump())
     db.add(db_inquiry)
     db.commit()
     db.refresh(db_inquiry)
+    signups.record_signup(db, db_inquiry.email, db_inquiry.mode)
+    # Runs after the response is sent, so a slow/failed SMTP call never
+    # delays or breaks the visitor's form submission — the lead is already
+    # safely persisted above regardless of whether this email goes out.
+    background_tasks.add_task(email_notify.send_inquiry_notification, db_inquiry, extra_to=db_inquiry.notify_email)
     return db_inquiry
 
 @app.get("/api/inquiries", response_model=List[schemas.InquiryResponse], dependencies=[Depends(verify_token)])
@@ -268,6 +275,24 @@ def list_inquiries(skip: int = 0, limit: int = 100, mode: str | None = None, db:
     if mode:
         query = query.filter(models.Inquiry.mode == mode)
     return query.order_by(models.Inquiry.id.desc()).offset(skip).limit(limit).all()
+
+# --- NEWSLETTER SIGNUP (footer form) ---
+NEWSLETTER_RATE_LIMIT = 5
+NEWSLETTER_RATE_WINDOW = 10 * 60  # 10 minutes
+_newsletter_requests = defaultdict(deque)
+
+@app.post("/api/newsletter-signup")
+def newsletter_signup(payload: schemas.NewsletterSignupCreate, request: Request, db: Session = Depends(get_db)):
+    _check_rate_limit(request, _newsletter_requests, NEWSLETTER_RATE_LIMIT, NEWSLETTER_RATE_WINDOW)
+    signups.record_signup(db, payload.email, "newsletter")
+    return {"ok": True}
+
+@app.get("/api/signups", response_model=List[schemas.SignUpResponse], dependencies=[Depends(verify_token)])
+def list_signups(skip: int = 0, limit: int = 100, source: str | None = None, db: Session = Depends(get_db)):
+    query = db.query(models.SignUp)
+    if source:
+        query = query.filter(models.SignUp.source == source)
+    return query.order_by(models.SignUp.id.desc()).offset(skip).limit(limit).all()
 
 @app.patch("/api/inquiries/{inquiry_id}", response_model=schemas.InquiryResponse, dependencies=[Depends(verify_token)])
 def update_inquiry(inquiry_id: int, update: schemas.InquiryUpdate, db: Session = Depends(get_db)):
@@ -560,6 +585,17 @@ def chat_with_flouv(request: ChatRequest, http_request: Request, db: Session = D
 def generate_report(request: ReportRequest, http_request: Request, db: Session = Depends(get_db)):
     _check_rate_limit(http_request, _report_requests, REPORT_RATE_LIMIT, REPORT_RATE_WINDOW)
     return rag_pipeline.handle_report(request.session_id, db)
+
+@app.post("/api/report/email")
+def email_report(payload: schemas.ReportEmailRequest, http_request: Request, db: Session = Depends(get_db)):
+    _check_rate_limit(http_request, _report_requests, REPORT_RATE_LIMIT, REPORT_RATE_WINDOW)
+    pdf_bytes = report_pdf.markdown_to_pdf_bytes(payload.report_markdown)
+    try:
+        email_notify.send_report_email(payload.email, pdf_bytes)
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Failed to send the report: {e}")
+    signups.record_signup(db, payload.email, "ai_report_email")
+    return {"ok": True}
 
 
 # --- STATIC FRONTEND SERVING ---

@@ -227,9 +227,15 @@ const labelStyle = {
   marginBottom: 6,
 };
 
-export default function InquiryModal({ mode = 'meeting', title, kind, context, onClose }) {
+export default function InquiryModal({ mode = 'meeting', title, kind, context, expertEmail, expertName, onClose }) {
   const config = MODES[mode] || MODES.meeting;
   const paper = { title, kind, context };
+  // Opened via a specific expert's "Connect with X" button rather than the
+  // generic "Book a Meeting" CTA — personalize the copy and (in submit())
+  // route the notification to them directly, not just the general inbox.
+  const blurb = mode === 'meeting' && expertName
+    ? `Tell us a bit about what you need, and ${expertName} will personally follow up.`
+    : config.blurb;
 
   const [form, setForm] = useState(() => {
     const initial = {};
@@ -285,11 +291,14 @@ export default function InquiryModal({ mode = 'meeting', title, kind, context, o
         phone: form.phone || null,
         message: body,
         raw_data: JSON.stringify(form),
+        notify_email: expertEmail || null,
+        notify_name: expertName || null,
       }),
     }).catch((err) => console.error('Failed to record inquiry', err));
 
+    const mailTo = expertEmail && expertEmail !== CONTACT_EMAIL ? `${CONTACT_EMAIL},${expertEmail}` : CONTACT_EMAIL;
     window.open(
-      `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+      `mailto:${mailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
       '_blank'
     );
     onClose();
@@ -393,7 +402,7 @@ export default function InquiryModal({ mode = 'meeting', title, kind, context, o
         <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, fontWeight: 700, margin: '0 0 8px', letterSpacing: '-0.01em', lineHeight: 1.25 }}>
           {config.heading(paper)}
         </h3>
-        <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--flouv-text)', margin: '0 0 22px' }}>{config.blurb}</p>
+        <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--flouv-text)', margin: '0 0 22px' }}>{blurb}</p>
 
         <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {config.fields.map((f) => (

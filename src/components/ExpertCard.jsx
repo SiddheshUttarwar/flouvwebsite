@@ -130,15 +130,9 @@ export default function ExpertCard({ expert, accent = 'var(--flouv-blue-soft)', 
           </div>
         )}
 
-        {expert.email ? (
-          <a href={`mailto:${expert.email}?subject=${encodeURIComponent(expert.ctaSubject)}`} style={ctaStyle}>
-            {expert.ctaLabel} →
-          </a>
-        ) : (
-          <button type="button" onClick={onConnect} style={ctaStyle}>
-            {expert.ctaLabel} →
-          </button>
-        )}
+        <button type="button" onClick={onConnect} style={ctaStyle}>
+          {expert.ctaLabel} →
+        </button>
       </div>
     </div>
   );

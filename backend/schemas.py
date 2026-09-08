@@ -29,6 +29,12 @@ class InquiryCreate(BaseModel):
     phone: Optional[str] = None
     message: Optional[str] = None
     raw_data: Optional[str] = None
+    # Set when the inquiry was opened via a specific FloUV contact's
+    # "Connect with X" button (e.g. Dirk Dubiel for EU dairy) rather than
+    # the generic "Book a Meeting" CTA — that person is also emailed
+    # alongside the standard notification inbox.
+    notify_email: Optional[str] = None
+    notify_name: Optional[str] = None
 
 
 class InquiryResponse(InquiryCreate):
@@ -41,6 +47,24 @@ class InquiryResponse(InquiryCreate):
 
 class InquiryUpdate(BaseModel):
     handled: bool
+
+
+class NewsletterSignupCreate(BaseModel):
+    email: str
+
+
+class SignUpResponse(BaseModel):
+    id: int
+    email: str
+    source: Optional[str] = None
+    created_at: Optional[datetime] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ReportEmailRequest(BaseModel):
+    email: str
+    report_markdown: str
 
 
 class TraceResponse(BaseModel):

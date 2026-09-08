@@ -16,6 +16,10 @@ export default function Answer() {
   const [error, setError] = useState(null);
   const [report, setReport] = useState(null);
   const [generatingReport, setGeneratingReport] = useState(false);
+  const [reportEmail, setReportEmail] = useState('');
+  const [sendingReport, setSendingReport] = useState(false);
+  const [reportSent, setReportSent] = useState(false);
+  const [reportSendError, setReportSendError] = useState(null);
 
   const messagesContainerRef = useRef(null);
   const initialFetchDone = useRef(false);
@@ -118,10 +122,36 @@ export default function Answer() {
       if (!res.ok) throw new Error('Failed to generate report');
       const data = await res.json();
       setReport(data.report);
+      setReportSent(false);
+      setReportSendError(null);
     } catch (err) {
       alert("Error generating report: " + err.message);
     }
     setGeneratingReport(false);
+  };
+
+  const sendReportEmail = async (e) => {
+    e.preventDefault();
+    const trimmed = reportEmail.trim();
+    if (!trimmed || sendingReport) return;
+
+    setSendingReport(true);
+    setReportSendError(null);
+    try {
+      const res = await fetch('/api/report/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: trimmed, report_markdown: report }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.detail || 'Failed to send the report');
+      }
+      setReportSent(true);
+    } catch (err) {
+      setReportSendError(err.message);
+    }
+    setSendingReport(false);
   };
 
   return (
@@ -150,7 +180,7 @@ export default function Answer() {
                   opacity: (generatingReport || loading) ? 0.7 : 1
                 }}
               >
-                {generatingReport ? 'Synthesizing...' : 'Generate AI Report'}
+                {generatingReport ? 'Synthesizing...' : 'Generate Report'}
               </button>
             )}
           </div>
@@ -244,14 +274,65 @@ export default function Answer() {
           position: 'fixed', inset: 0, background: 'var(--flouv-white)', zIndex: 9999, overflowY: 'auto', padding: '40px 20px'
         }}>
           <div style={{ maxWidth: 800, margin: '0 auto' }}>
-            <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 40 }}>
-              <button onClick={() => setReport(null)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 16, color: 'var(--flouv-muted)' }}>
+            <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, gap: 16, flexWrap: 'wrap' }}>
+              <button
+                onClick={() => {
+                  setReport(null);
+                  setReportEmail('');
+                  setReportSent(false);
+                  setReportSendError(null);
+                }}
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 16, color: 'var(--flouv-muted)' }}
+              >
                 ← Close
               </button>
-              <button onClick={() => window.print()} style={{ background: 'var(--flouv-green)', color: 'var(--flouv-green-ink)', border: 'none', padding: '10px 24px', borderRadius: 100, fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>
-                Download PDF (Print)
-              </button>
+
+              {reportSent ? (
+                <div style={{ fontSize: 14, fontWeight: 600, color: '#166534' }}>✓ Sent to {reportEmail}</div>
+              ) : (
+                <form onSubmit={sendReportEmail} style={{ display: 'flex', gap: 8 }}>
+                  <input
+                    type="email"
+                    required
+                    value={reportEmail}
+                    onChange={(e) => setReportEmail(e.target.value)}
+                    placeholder="you@company.com"
+                    disabled={sendingReport}
+                    style={{
+                      padding: '10px 16px',
+                      borderRadius: 100,
+                      border: '1px solid var(--flouv-border)',
+                      fontSize: 14,
+                      fontFamily: "'Inter', sans-serif",
+                      outline: 'none',
+                      minWidth: 220,
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    disabled={sendingReport || !reportEmail.trim()}
+                    style={{
+                      background: 'var(--flouv-green)',
+                      color: 'var(--flouv-green-ink)',
+                      border: 'none',
+                      padding: '10px 24px',
+                      borderRadius: 100,
+                      fontSize: 14,
+                      fontWeight: 700,
+                      fontFamily: "'Inter', sans-serif",
+                      cursor: sendingReport || !reportEmail.trim() ? 'not-allowed' : 'pointer',
+                      opacity: sendingReport || !reportEmail.trim() ? 0.7 : 1,
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {sendingReport ? 'Sending...' : 'Email me this report'}
+                  </button>
+                </form>
+              )}
             </div>
+            {reportSendError && (
+              <div className="no-print" style={{ marginBottom: 24, fontSize: 13.5, color: '#991b1b' }}>{reportSendError}</div>
+            )}
 
             <div className="report-content" style={{ padding: '40px', border: '1px solid var(--flouv-border)', borderRadius: 8, boxShadow: '0 10px 30px oklch(0.3 0.08 264 / 0.05)' }}>
               <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 32, marginBottom: 8 }}>FloUV Technology Brief</h1>

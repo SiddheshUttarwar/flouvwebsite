@@ -21,6 +21,7 @@ const EU_DAIRY_CONTACT = {
   ],
   role: 'He is EU dairy technical marketing and point of contact for EU dairy inquiries.',
   tags: ['MARKET ACCESS', 'PROCESS & FOOD TECHNOLOGY', 'DAIRY VALUE CHAIN'],
+  email: 'business@elefq.com',
   ctaLabel: 'Connect with Prashant',
 };
 
@@ -385,7 +386,7 @@ function FlowComparison() {
 }
 
 export default function Technology() {
-  const [meetingOpen, setMeetingOpen] = useState(false);
+  const [meetingContext, setMeetingContext] = useState(null);
 
   return (
     <Layout active="Technology">
@@ -1000,21 +1001,24 @@ export default function Technology() {
               </p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <Link
-                to="/about"
+              <button
+                type="button"
+                onClick={() => setMeetingContext({})}
                 style={{
                   background: 'var(--flouv-green)',
                   color: 'var(--flouv-green-ink)',
+                  border: 'none',
                   padding: '16px 30px',
                   borderRadius: 100,
-                  textDecoration: 'none',
                   fontSize: 14.5,
                   fontWeight: 700,
                   textAlign: 'center',
+                  fontFamily: "'Inter', sans-serif",
+                  cursor: 'pointer',
                 }}
               >
                 Talk to the FloUV team →
-              </Link>
+              </button>
               <Link
                 to="/faq"
                 style={{
@@ -1034,7 +1038,7 @@ export default function Technology() {
             </div>
           </div>
 
-          <ExpertCard expert={EU_DAIRY_CONTACT} onConnect={() => setMeetingOpen(true)} />
+          <ExpertCard expert={EU_DAIRY_CONTACT} onConnect={() => setMeetingContext({ expertEmail: EU_DAIRY_CONTACT.email, expertName: EU_DAIRY_CONTACT.name })} />
         </section>
 
         {/* CTA */}
@@ -1065,7 +1069,7 @@ export default function Technology() {
             Tech department or book a meeting.
           </p>
           <button
-            onClick={() => setMeetingOpen(true)}
+            onClick={() => setMeetingContext({})}
             style={{
               background: 'var(--flouv-green)',
               color: 'var(--flouv-green-ink)',
@@ -1082,7 +1086,7 @@ export default function Technology() {
           </button>
         </section>
       </div>
-      {meetingOpen && <InquiryModal mode="meeting" onClose={() => setMeetingOpen(false)} />}
+      {meetingContext && <InquiryModal mode="meeting" expertEmail={meetingContext.expertEmail} expertName={meetingContext.expertName} onClose={() => setMeetingContext(null)} />}
     </Layout>
   );
 }

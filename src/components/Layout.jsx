@@ -76,9 +76,15 @@ export default function Layout({ active, children }) {
 
   const handleSignUp = (e) => {
     e.preventDefault();
-    if (!email.trim()) return;
+    const trimmed = email.trim();
+    if (!trimmed) return;
     setSubscribed(true);
     setEmail('');
+    fetch('/api/newsletter-signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: trimmed }),
+    }).catch((err) => console.error('Failed to record newsletter signup', err));
   };
 
   return (

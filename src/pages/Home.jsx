@@ -69,7 +69,7 @@ export const FLOUV_INSIGHTS = [
     title: 'Differentiate your products with non-thermal FloUV processing',
     body: 'Liquids flow as they should — moving naturally through the process while being made safe by light, not heat. Retain structure, nutrition, and value, just as intended.',
     cta: 'Talk to our team',
-    to: '/about',
+    meeting: true,
     visual: 'Ambient reactor / product visual',
     image: differentiateImage,
   },
@@ -534,6 +534,22 @@ export default function Home() {
                     {item.report ? (
                       <button
                         onClick={() => setModal({ mode: 'report', ...item.report })}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          padding: 0,
+                          color: 'var(--flouv-blue)',
+                          fontSize: 14.5,
+                          fontWeight: 700,
+                          fontFamily: "'Inter', sans-serif",
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {item.cta} →
+                      </button>
+                    ) : item.meeting ? (
+                      <button
+                        onClick={() => setModal({ mode: 'meeting' })}
                         style={{
                           background: 'none',
                           border: 'none',

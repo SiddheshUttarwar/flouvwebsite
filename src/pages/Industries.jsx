@@ -69,7 +69,7 @@ export const INDUSTRIES = [
       ],
       role: 'He is EU dairy technical marketing and point of contact for EU dairy inquiries.',
       tags: ['MARKET ACCESS', 'PROCESS TECHNOLOGY', 'GEA / MACHINERY'],
-      email: 'info@dubielconsulting.de',
+      email: 'business@elefq.com',
       ctaLabel: 'Connect with Dirk',
       ctaSubject: 'EU dairy inquiry — FloUV non-thermal UV-C',
     },
@@ -144,6 +144,7 @@ export const INDUSTRIES = [
       ],
       role: 'He is the point of contact for FloUV apple cider and hard cider inquiries across the USA and Canada.',
       tags: ['B2B SALES', 'CIDER PRODUCTION', 'FRUIT PROCESSING EQUIPMENT', 'NORTH AMERICA'],
+      email: 'sales@juicingsystems.com',
       ctaLabel: 'Connect with Nathan',
     },
     papers: [
@@ -443,7 +444,10 @@ export default function Industries() {
   );
   const active = INDUSTRIES.find((i) => i.id === activeId);
   const [requestPaper, setRequestPaper] = useState(null);
-  const [meetingOpen, setMeetingOpen] = useState(false);
+  // null when closed; {} for a generic "Book a Meeting" open, or
+  // { expertEmail, expertName } when opened via a specific expert's
+  // "Connect with X" button, so that person is CC'd on the notification.
+  const [meetingContext, setMeetingContext] = useState(null);
 
   useEffect(() => {
     const tab = searchParams.get('tab');
@@ -579,21 +583,27 @@ export default function Industries() {
                   {active.title}
                 </h2>
                 <p style={{ fontSize: 16.5, lineHeight: 1.7, color: 'var(--flouv-text)', margin: '0 0 28px' }}>{active.intro}</p>
-                <Link
-                  to="/about"
+                <button
+                  type="button"
+                  onClick={() =>
+                    active.ctaLabel.startsWith('Talk to')
+                      ? setMeetingContext({})
+                      : setRequestPaper({ title: active.ctaLabel, kind: active.label.toUpperCase() })
+                  }
                   style={{
                     background: 'var(--flouv-green)',
                     color: 'var(--flouv-green-ink)',
+                    border: 'none',
                     padding: '14px 28px',
                     borderRadius: 100,
-                    textDecoration: 'none',
                     fontSize: 14,
                     fontWeight: 700,
-                    display: 'inline-block',
+                    fontFamily: "'Inter', sans-serif",
+                    cursor: 'pointer',
                   }}
                 >
                   {active.ctaLabel}
-                </Link>
+                </button>
               </div>
             </div>
 
@@ -695,7 +705,7 @@ export default function Industries() {
             )}
 
             {active.expert && active.expert.placement === 'before-faq' && (
-              <ExpertCard expert={active.expert} accent={active.accent} onConnect={() => setMeetingOpen(true)} />
+              <ExpertCard expert={active.expert} accent={active.accent} onConnect={() => setMeetingContext({ expertEmail: active.expert.email, expertName: active.expert.name })} />
             )}
 
             {active.faq && (
@@ -780,7 +790,7 @@ export default function Industries() {
             )}
 
             {active.expert && active.expert.placement !== 'before-faq' && (
-              <ExpertCard expert={active.expert} accent={active.accent} onConnect={() => setMeetingOpen(true)} />
+              <ExpertCard expert={active.expert} accent={active.accent} onConnect={() => setMeetingContext({ expertEmail: active.expert.email, expertName: active.expert.name })} />
             )}
           </div>
         </section>
@@ -811,7 +821,7 @@ export default function Industries() {
           </p>
           <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
             <button
-              onClick={() => setMeetingOpen(true)}
+              onClick={() => setMeetingContext({})}
               style={{
                 background: 'var(--flouv-green)',
                 color: 'var(--flouv-green-ink)',
@@ -848,7 +858,7 @@ export default function Industries() {
       {requestPaper && (
         <InquiryModal mode="report" title={requestPaper.title} kind={requestPaper.kind} context={active.label} onClose={() => setRequestPaper(null)} />
       )}
-      {meetingOpen && <InquiryModal mode="meeting" context={active.label} onClose={() => setMeetingOpen(false)} />}
+      {meetingContext && <InquiryModal mode="meeting" context={active.label} expertEmail={meetingContext.expertEmail} expertName={meetingContext.expertName} onClose={() => setMeetingContext(null)} />}
     </Layout>
   );
 }
