@@ -589,8 +589,8 @@ def generate_report(request: ReportRequest, http_request: Request, db: Session =
 @app.post("/api/report/email")
 def email_report(payload: schemas.ReportEmailRequest, http_request: Request, db: Session = Depends(get_db)):
     _check_rate_limit(http_request, _report_requests, REPORT_RATE_LIMIT, REPORT_RATE_WINDOW)
-    pdf_bytes = report_pdf.markdown_to_pdf_bytes(payload.report_markdown)
     try:
+        pdf_bytes = report_pdf.markdown_to_pdf_bytes(payload.report_markdown)
         email_notify.send_report_email(payload.email, pdf_bytes)
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"Failed to send the report: {e}")
