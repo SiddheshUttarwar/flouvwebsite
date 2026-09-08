@@ -538,11 +538,12 @@ export default function About() {
               rather than the end of it — and the offering keeps growing as their customers’ ambitions do.
               </p>
               <p style={{ fontSize: 16, lineHeight: 1.75, color: 'var(--flouv-text)', margin: '0 0 32px' }}>
-                Cider is where that matters most: back-sweetening hands surviving yeast a fresh food source, so packages
-              referment, cider drifts dry and cloudy, and cans bulge. So Juicing Systems brought their customers
-              something new. FloUV’s non-thermal step now sits in the cider lines they supply, delivered by the same
-              install crew, service contract and financing. They are our exclusive partner for apple cider
-              pasteurization, reaching hundreds of small producers through a relationship that was already there.
+                Thermal pasteurization their catalogue already covered well. What customers increasingly asked for
+              was a non-thermal option alongside it — and that is what this collaboration adds. FloUV’s UV-C stage is
+              specified, installed, commissioned, serviced and financed as part of the line itself, by the same people
+              who build the rest of it. As our exclusive partner for apple cider pasteurization, Juicing Systems now
+              brings that choice to hundreds of small producers through the supplier they already work with, while
+              FloUV reaches a market it would have taken years to build alone.
               </p>
 
             <div

@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout.jsx';
 import InquiryModal from '../components/InquiryModal.jsx';
 import ExpertCard from '../components/ExpertCard.jsx';
-import tabJuices from '../../uploads/tab-juices.webp';
+import tabJuices from '../../uploads/tab-juices.jpg';
 import tabBeverages from '../../uploads/tab-beverages.webp';
 import tabBrewing from '../../uploads/tab-brewing.webp';
 import tabBiofermentation from '../../uploads/tab-biofermentation.webp';
