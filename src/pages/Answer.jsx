@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import Layout from '../components/Layout.jsx';
+import InquiryModal from '../components/InquiryModal.jsx';
 import { useChat } from '../context/ChatContext.jsx';
 
 export default function Answer() {
@@ -20,6 +21,7 @@ export default function Answer() {
   const [sendingReport, setSendingReport] = useState(false);
   const [reportSent, setReportSent] = useState(false);
   const [reportSendError, setReportSendError] = useState(null);
+  const [contactQuestion, setContactQuestion] = useState(null);
 
   const messagesContainerRef = useRef(null);
   const initialFetchDone = useRef(false);
@@ -81,8 +83,10 @@ export default function Answer() {
 
       const data = await res.json();
 
-      // Add assistant response
-      setMessages(prev => [...prev, { role: 'assistant', content: data.answer }]);
+      // Add assistant response. fallback/originalQuestion are only used to
+      // show a "Contact FloUV" button on this specific message when the bot
+      // couldn't answer — not sent back to the server.
+      setMessages(prev => [...prev, { role: 'assistant', content: data.answer, fallback: data.fallback, originalQuestion: userQuery }]);
 
       if (data.session_id) {
         setSessionId(data.session_id);
@@ -203,6 +207,25 @@ export default function Answer() {
                   ) : (
                     <div className="markdown-body" style={{ fontSize: 16, lineHeight: 1.7, color: 'var(--flouv-ink)' }}>
                       <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      {msg.fallback && (
+                        <button
+                          onClick={() => setContactQuestion(msg.originalQuestion)}
+                          style={{
+                            marginTop: 8,
+                            background: 'var(--flouv-green)',
+                            color: 'var(--flouv-green-ink)',
+                            border: 'none',
+                            padding: '11px 22px',
+                            borderRadius: 100,
+                            fontSize: 13.5,
+                            fontWeight: 700,
+                            fontFamily: "'Inter', sans-serif",
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Contact FloUV directly →
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
@@ -267,6 +290,14 @@ export default function Answer() {
 
         </div>
       </div>
+
+      {contactQuestion && (
+        <InquiryModal
+          mode="general"
+          initialMessage={contactQuestion}
+          onClose={() => setContactQuestion(null)}
+        />
+      )}
 
       {/* Report Modal / Overlay for Printing */}
       {report && (

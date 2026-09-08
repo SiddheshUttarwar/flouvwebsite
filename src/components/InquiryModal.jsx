@@ -227,7 +227,7 @@ const labelStyle = {
   marginBottom: 6,
 };
 
-export default function InquiryModal({ mode = 'meeting', title, kind, context, expertEmail, expertName, onClose }) {
+export default function InquiryModal({ mode = 'meeting', title, kind, context, expertEmail, expertName, initialMessage, onClose }) {
   const config = MODES[mode] || MODES.meeting;
   const paper = { title, kind, context };
   // Opened via a specific expert's "Connect with X" button rather than the
@@ -242,6 +242,8 @@ export default function InquiryModal({ mode = 'meeting', title, kind, context, e
     for (const f of config.fields) {
       if (f.type === 'select') {
         initial[f.name] = f.name === 'application' && context && f.options.includes(context) ? context : f.options[0];
+      } else if (f.name === 'message' && initialMessage) {
+        initial[f.name] = initialMessage;
       } else {
         initial[f.name] = '';
       }
