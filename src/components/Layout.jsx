@@ -16,6 +16,11 @@ const FLOUV_LOCATIONS = [
     name: 'FloUV Innovation & Science',
     address: '3500 John A Merritt Blvd, 3204 Agriculture Biotechnology Building, Nashville, TN 37209-1561',
   },
+  {
+    name: 'FloUV EU (Sales, Demo and Validation)',
+    company: 'WHC Lab',
+    address: 'Prospect, Newcastle, Co. Wicklow, Ireland, A63 H0K8',
+  },
 ];
 
 const PARTNER_LOCATIONS = [
@@ -34,8 +39,10 @@ const PARTNER_LOCATIONS = [
   },
   {
     name: 'Mexico Distribution',
+    company: 'Heltec',
     address: 'Miguel Glinka 78, Héroes de Nacozári, Gustavo A. Madero, 07780 Ciudad de México, CDMX, Mexico',
     phone: '+52-55-5752-9600',
+    email: 'ventas@heltec.com.mx',
   },
 ];
 
