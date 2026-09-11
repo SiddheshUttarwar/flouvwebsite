@@ -75,6 +75,9 @@ export default function HealthTab() {
   const orphanedUploads = uploads.filter(u => u.orphaned);
   const orphanedBytes = orphanedUploads.reduce((sum, u) => sum + u.bytes, 0);
 
+  const siteImages = health?.site_images || [];
+  const siteImagesBytes = siteImages.reduce((sum, img) => sum + img.bytes, 0);
+
   if (loading) {
     return <div style={{ padding: 40, textAlign: 'center', color: 'var(--flouv-muted)' }}>Loading...</div>;
   }
@@ -106,6 +109,58 @@ export default function HealthTab() {
             ))}
           </div>
         </div>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+        <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, fontWeight: 700, margin: 0, color: 'var(--flouv-blue)' }}>
+          Site images
+        </h3>
+        <span style={{ fontSize: 12.5, color: 'var(--flouv-muted)' }}>
+          {siteImages.length} image{siteImages.length === 1 ? '' : 's'} — {formatBytes(siteImagesBytes)} total
+        </span>
+      </div>
+      <p style={{ color: 'var(--flouv-muted)', fontSize: 12.5, margin: '4px 0 12px' }}>
+        Every image in the built frontend bundle — exactly what a visitor downloads loading the site.
+        This is the number that drives bandwidth, not the uploads folder below.
+      </p>
+
+      <div style={{ background: 'var(--flouv-white)', borderRadius: 8, border: '1px solid var(--flouv-border)', overflow: 'hidden', marginBottom: 32 }}>
+        {siteImages.length === 0 ? (
+          <div style={{ padding: 32, textAlign: 'center', color: 'var(--flouv-muted)', fontSize: 13.5 }}>
+            No built assets found — run `npm run build` (or deploy) to populate dist/assets.
+          </div>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'left', padding: '10px 14px', fontSize: 11, fontWeight: 700, color: 'var(--flouv-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid var(--flouv-border)' }}>File</th>
+                  <th style={{ textAlign: 'left', padding: '10px 14px', fontSize: 11, fontWeight: 700, color: 'var(--flouv-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid var(--flouv-border)' }}>Size</th>
+                  <th style={{ textAlign: 'left', padding: '10px 14px', fontSize: 11, fontWeight: 700, color: 'var(--flouv-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid var(--flouv-border)' }}>Share</th>
+                </tr>
+              </thead>
+              <tbody>
+                {siteImages.map((img) => (
+                  <tr key={img.filename}>
+                    <td style={{ padding: '10px 14px', fontSize: 13, color: 'var(--flouv-text)', borderBottom: '1px solid var(--flouv-border)', maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={img.filename}>
+                      {img.filename}
+                    </td>
+                    <td style={{ padding: '10px 14px', fontSize: 12.5, color: 'var(--flouv-muted)', borderBottom: '1px solid var(--flouv-border)' }}>{formatBytes(img.bytes)}</td>
+                    <td style={{ padding: '10px 14px', borderBottom: '1px solid var(--flouv-border)' }}>
+                      <div style={{ width: 120, height: 6, background: 'var(--flouv-bg-soft)', borderRadius: 100, overflow: 'hidden' }}>
+                        <div style={{
+                          width: `${siteImagesBytes > 0 ? (img.bytes / siteImagesBytes) * 100 : 0}%`,
+                          height: '100%',
+                          background: 'var(--flouv-blue)',
+                        }} />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>

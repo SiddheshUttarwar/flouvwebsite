@@ -3,13 +3,13 @@ import { Link, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout.jsx';
 import InquiryModal from '../components/InquiryModal.jsx';
 import ExpertCard from '../components/ExpertCard.jsx';
-import tabJuices from '../../uploads/tab-juices.jpg';
+import tabJuices from '../../uploads/tab-juices.webp';
 import tabBeverages from '../../uploads/tab-beverages.webp';
 import tabBrewing from '../../uploads/tab-brewing.webp';
 import tabBiofermentation from '../../uploads/tab-biofermentation.webp';
 import tabWater from '../../uploads/tab-water.webp';
-import dierkHeadshot from '../../uploads/dierk-dubiel.png';
-import nathanHeadshot from '../../uploads/nathan-riddell.png';
+import dierkHeadshot from '../../uploads/dierk-dubiel.webp';
+import nathanHeadshot from '../../uploads/nathan-riddell.webp';
 
 export const INDUSTRIES = [
   {

@@ -4,11 +4,11 @@ import Layout from '../components/Layout.jsx';
 import InquiryModal from '../components/InquiryModal.jsx';
 import ExpertCard from '../components/ExpertCard.jsx';
 import techHeroBanner from '../../uploads/tech-hero-banner.webp';
-import reactor650 from '../../uploads/reactor-650.jpg';
-import reactor2000 from '../../uploads/reactor-2000.jpg';
-import reactor2500 from '../../uploads/reactor-2500.jpg';
-import module5000 from '../../uploads/flouv-5000-module.jpg';
-import prashantHeadshot from '../../uploads/prashant-tripathi.png';
+import reactor650 from '../../uploads/reactor-650.webp';
+import reactor2000 from '../../uploads/reactor-2000.webp';
+import reactor2500 from '../../uploads/reactor-2500.webp';
+import module5000 from '../../uploads/flouv-5000-module.webp';
+import prashantHeadshot from '../../uploads/prashant-tripathi.webp';
 
 const EU_DAIRY_CONTACT = {
   eyebrow: 'EU CONTACT FOR FLOUV',

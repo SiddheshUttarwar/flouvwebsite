@@ -151,9 +151,15 @@ class DiskUsageEntry(BaseModel):
     exists: bool
 
 
+class SiteImageEntry(BaseModel):
+    filename: str
+    bytes: int
+
+
 class HealthResponse(BaseModel):
     checks: List[HealthCheck]
     disk_usage: List[DiskUsageEntry]
+    site_images: List[SiteImageEntry]
 
 
 class UploadFileInfo(BaseModel):

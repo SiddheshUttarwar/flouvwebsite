@@ -6,6 +6,7 @@ from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
@@ -65,6 +66,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# No response compression was happening at all — every request that accepted
+# gzip still got the raw bytes (confirmed: the ~766KB JS bundle was served
+# uncompressed instead of the ~223KB Vite's own build report shows gzip
+# achieving). Applies to JS/CSS/HTML/JSON alike; already-compressed formats
+# (webp/mp4) just skip below the size gain threshold with a bit of wasted
+# CPU, which is the standard, accepted tradeoff for a blanket GZipMiddleware.
+app.add_middleware(GZipMiddleware, minimum_size=500)
+
 
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
@@ -81,6 +90,27 @@ async def add_security_headers(request: Request, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+
+    # Static assets aren't cached at all by default, so every repeat visitor
+    # re-downloads the full page weight on every load. /assets/* and
+    # /uploads/* filenames are content-addressed (Vite hashes the build
+    # output; /api/upload prefixes a fresh uuid per file) — the filename
+    # itself changes whenever the content does, so caching those forever is
+    # safe. Everything else under /media, /favicon.png etc. is NOT
+    # content-hashed (Vite copies public/ through as-is), so an in-place
+    # replacement — like the team video fix — needs visitors to notice the
+    # change; a short revalidated cache balances that against bandwidth.
+    path = request.url.path
+    if path.startswith("/assets/") or path.startswith("/uploads/"):
+        response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    elif path.startswith("/media/") or path in ("/favicon.png",):
+        response.headers["Cache-Control"] = "public, max-age=3600, must-revalidate"
+    elif path == "/" or path.endswith(".html"):
+        # Always revalidate index.html — it's what points at the current
+        # hashed /assets/ filenames, so a stale cached copy after a deploy
+        # would 404 on assets that no longer exist.
+        response.headers["Cache-Control"] = "no-cache"
+
     return response
 
 
@@ -482,6 +512,27 @@ def _dir_size_bytes(path: str) -> int:
                 pass
     return total
 
+IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg", ".avif"}
+
+def _list_site_images(assets_dir: str) -> List[schemas.SiteImageEntry]:
+    """Every image in the built frontend bundle (dist/assets) — i.e. exactly
+    what a visitor's browser downloads on page load, as opposed to
+    backend/uploads which also holds admin-uploaded blog images and unused
+    raw originals that never ship to a visitor."""
+    if not os.path.isdir(assets_dir):
+        return []
+    entries = []
+    for f in os.listdir(assets_dir):
+        if os.path.splitext(f)[1].lower() not in IMAGE_EXTENSIONS:
+            continue
+        full_path = os.path.join(assets_dir, f)
+        try:
+            entries.append(schemas.SiteImageEntry(filename=f, bytes=os.path.getsize(full_path)))
+        except OSError:
+            pass
+    entries.sort(key=lambda e: e.bytes, reverse=True)
+    return entries
+
 @app.get("/api/admin/health", response_model=schemas.HealthResponse, dependencies=[Depends(verify_token)])
 def get_health():
     gemini_key = os.getenv("GEMINI_API_KEY")
@@ -537,7 +588,10 @@ def get_health():
         schemas.DiskUsageEntry(name="Uploads", path=UPLOAD_DIR, bytes=_dir_size_bytes(UPLOAD_DIR), exists=os.path.isdir(UPLOAD_DIR)),
     ]
 
-    return schemas.HealthResponse(checks=checks, disk_usage=disk_usage)
+    dist_assets_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'dist', 'assets')
+    site_images = _list_site_images(dist_assets_dir)
+
+    return schemas.HealthResponse(checks=checks, disk_usage=disk_usage, site_images=site_images)
 
 
 # --- UPLOADS CLEANUP ---

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import flouvLogo from '../assets/flouv-logo.png';
+import flouvLogo from '../assets/flouv-logo.webp';
 
 const Login = ({ onSuccess }) => {
   const [password, setPassword] = useState('');

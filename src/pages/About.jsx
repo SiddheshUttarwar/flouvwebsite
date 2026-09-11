@@ -4,10 +4,10 @@ import Layout from '../components/Layout.jsx';
 import InquiryModal from '../components/InquiryModal.jsx';
 import ceoPhoto from '../../uploads/pankajttarwar.webp';
 import ctoPhoto from '../../uploads/AnkitPatras2.webp';
-import elefqLogo from '../../uploads/ELEFQ_Logo.png';
-import elefqWordmark from '../../uploads/ELEFQ_Wordmark.png';
-import juicingSystemsLogo from '../../uploads/JuicingSystems_Logo.png';
-import whcLabLogo from '../../uploads/WHCLab_Logo.png';
+import elefqLogo from '../../uploads/ELEFQ_Logo.webp';
+import elefqWordmark from '../../uploads/ELEFQ_Wordmark.webp';
+import juicingSystemsLogo from '../../uploads/JuicingSystems_Logo.webp';
+import whcLabLogo from '../../uploads/WHCLab_Logo.webp';
 
 const PERFORMANCE_ICONS = {
   // Falling demand — bar heights step down, with the trend line calling it out

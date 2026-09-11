@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 import Layout from '../components/Layout.jsx';
 import InquiryModal from '../components/InquiryModal.jsx';
 import ImagePlaceholder from '../components/ImagePlaceholder.jsx';
-import climateImpactImage from '../../uploads/Flouv climate impact .png';
-import thermalComparisonImage from '../../uploads/Thermal vs non thermal comparision .png';
-import lactoferrinImage from '../../uploads/Lactofferin Bioactive Image .png';
-import liquidsAliveImage from '../../uploads/When liquid stay alive .png';
-import differentiateImage from '../../uploads/Diffrentiate your product image .png';
+import climateImpactImage from '../../uploads/flouv-climate-impact.webp';
+import thermalComparisonImage from '../../uploads/thermal-vs-nonthermal.webp';
+import lactoferrinImage from '../../uploads/lactoferrin-bioactive.webp';
+import liquidsAliveImage from '../../uploads/when-liquid-stays-alive.webp';
+import differentiateImage from '../../uploads/differentiate-product.webp';
 import heroImage from '../../uploads/home-hero-banner.webp';
-import howItWorksImage from '../../uploads/reactor-inside.jpg';
+import howItWorksImage from '../../uploads/reactor-inside.webp';
 
 export const SUSTAINABILITY_STATS = [
   { value: '~82%', label: 'Lower energy intensity (EEO) than HTST thermal pasteurization' },
